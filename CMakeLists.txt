@@ -3,4 +3,7 @@ project(Bubo)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Bubo src/main.cpp)
+include_directories(lib)
+include_directories(include)
+
+add_subdirectory(src)
