@@ -11,6 +11,8 @@ namespace bubo {
         ~Application();
 
         void run();
+    private:
+        static Application* s_appInstance;
     };
 
 }

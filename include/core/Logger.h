@@ -1,8 +1,6 @@
 #ifndef BUBO_LOGGER_H
 #define BUBO_LOGGER_H
 
-#define DEBUG_MODE
-
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 

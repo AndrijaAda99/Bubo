@@ -27,7 +27,7 @@ namespace bubo {
         debugSinks[1]->set_pattern("[%T] [%n: %l] %v");
 
         s_coreLogger = std::make_shared<spdlog::logger>("BUBO", coreSinks.begin(), coreSinks.end());
-        s_debugLogger = std::make_shared<spdlog::logger>("DEBUG_BUBO", debugSinks.begin(), debugSinks.end());
+        s_debugLogger = std::make_shared<spdlog::logger>("BUBO_DEBUG", debugSinks.begin(), debugSinks.end());
 
         spdlog::register_logger(s_coreLogger);
         spdlog::register_logger(s_debugLogger);

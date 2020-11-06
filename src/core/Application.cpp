@@ -1,22 +1,19 @@
 #include "core/Application.h"
 
-
 namespace bubo {
 
+    Application* Application::s_appInstance = nullptr;
+
     Application::Application() {
-        BUBO_INFO("Hello, App!");
-        BUBO_TRACE("Trace");
-        BUBO_WARN("Warn");
-        BUBO_ERROR("err");
-        BUBO_CRITICAL("crit");
-    }
+        BUBO_ASSERT(!s_appInstance, "Application already created!");
+        s_appInstance = this;
+   }
 
     Application::~Application() {
-        BUBO_DEBUG_INFO("Bye, App!");
     }
 
     void Application::run() {
-        // TODO: Main Loopz
+        // TODO: Main Loop
     }
 
 }
