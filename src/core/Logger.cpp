@@ -23,7 +23,7 @@ namespace bubo {
         coreSinks[1]->set_pattern("[%T] [%n: %l] %v");
 
         // TODO: find some better way for debug pattern
-        debugSinks[0]->set_pattern("[%T] [%^%n: %l %$] %v");
+        debugSinks[0]->set_pattern("[%T] [%^%n: %l%$] %v");
         debugSinks[1]->set_pattern("[%T] [%n: %l] %v");
 
         s_coreLogger = std::make_shared<spdlog::logger>("BUBO", coreSinks.begin(), coreSinks.end());

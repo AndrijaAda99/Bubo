@@ -4,7 +4,13 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <utility>
+
+#include "events/Event.h"
+
 namespace bubo {
+
+    using EventCallbackFunc = std::function<void(Event&)>;
 
     struct WindowProperties_t {
         const std::string title;
@@ -17,15 +23,22 @@ namespace bubo {
     };
 
     class Window {
+
     public:
+
         explicit Window(const WindowProperties_t& windowProperties);
         ~Window();
 
         void update();
 
-        unsigned int getWidth() const { return m_windowData.width; };
-        unsigned int getHeight() const { return m_windowData.height; };
+        unsigned int getWidth() const { return m_windowData.width; }
+        unsigned int getHeight() const { return m_windowData.height; }
 
+        void setEventCallbackFunction(EventCallbackFunc callbackFunc_) {
+            m_windowData.callbackFunc = callbackFunc_;
+        }
+
+        GLFWwindow *getMWindow() const { return m_window; }
 
     private:
         virtual void init(const WindowProperties_t& windowProperties);
@@ -34,6 +47,7 @@ namespace bubo {
         struct WindowData_t {
             std::string title;
             unsigned int width, height;
+            EventCallbackFunc callbackFunc;
         };
 
         GLFWwindow* m_window = nullptr;
