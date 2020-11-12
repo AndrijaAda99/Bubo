@@ -2,6 +2,7 @@
 #define BUBO_APPLICATION_H
 
 #include "core/Window.h"
+#include "renderer/Shader.h"
 #include "events/WindowEvent.h"
 
 namespace bubo {
@@ -21,6 +22,8 @@ namespace bubo {
         std::unique_ptr<Window> m_window;
         static Application* s_appInstance;
 
+        unsigned int VBO, VAO;
+        std::unique_ptr<Shader> m_shaderProgram;
         bool m_running = true;
     };
 

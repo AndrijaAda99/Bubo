@@ -61,6 +61,7 @@ namespace bubo {
             WindowCloseEvent event;
             windowData.callbackFunc(event);
         });
+
     }
 
     void Window::shutdown() {
