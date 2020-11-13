@@ -7,13 +7,11 @@
 namespace bubo {
 
     Window::Window(const WindowProperties_t &windowProperties) {
-        BUBO_DEBUG_TRACE("Initializing window...");
         init(windowProperties);
         BUBO_TRACE("Window initialized!");
     }
 
     Window::~Window() {
-        BUBO_DEBUG_TRACE("Shutting down window...");
         shutdown();
         BUBO_TRACE("Window successfully closed.");
     }

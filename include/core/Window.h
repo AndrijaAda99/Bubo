@@ -36,11 +36,9 @@ namespace bubo {
             m_windowData.callbackFunc = callbackFunc_;
         }
 
-        GLFWwindow *getMWindow() const { return m_window; }
-
     private:
-        virtual void init(const WindowProperties_t& windowProperties);
-        virtual void shutdown();
+        void init(const WindowProperties_t& windowProperties);
+        void shutdown();
     private:
         struct WindowData_t {
             std::string title;

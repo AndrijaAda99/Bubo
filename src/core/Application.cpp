@@ -39,7 +39,7 @@ namespace bubo {
     Application::~Application() {
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
-    };
+    }
 
     void Application::run() {
 
@@ -47,9 +47,16 @@ namespace bubo {
             glClearColor(.1f, .1f, .1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            m_shaderProgram->use();
+            m_shaderProgram->bind();
+            m_shaderProgram->setFloat4("u_Color",
+                                       glm::vec4((sin(2*glfwGetTime()) + 1) / 2.0f,
+                                                         (cos(2*glfwGetTime()) + 1) / 2.0f,
+                                                         (sin(2*glfwGetTime()) + 1) / 2.0f,
+                                                         1.0f));
+
             glBindVertexArray(VAO);
             glDrawArrays(GL_TRIANGLES, 0, 3);
+            m_shaderProgram->unbind();
             m_window->update();
         }
 

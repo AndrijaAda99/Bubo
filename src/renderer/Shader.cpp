@@ -3,17 +3,19 @@
 
 #include "glad/glad.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace bubo {
 
-    Shader::Shader(const char *vertexShaderPath, const char *fragmentShaderPath) {
-        init(parseShader(vertexShaderPath).c_str(), parseShader(fragmentShaderPath).c_str());
+    Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath) {
+        init(parseShader(vertexShaderPath), parseShader(fragmentShaderPath));
     }
 
     Shader::~Shader() {
         destroy();
     }
 
-    int Shader::compileShader(unsigned int type, const char *shaderSrc) {
+    unsigned int Shader::compileShader(unsigned int type, const char *shaderSrc) {
         unsigned int shaderID = glCreateShader(type);
         glShaderSource(shaderID, 1, &shaderSrc, nullptr);
         glCompileShader(shaderID);
@@ -23,18 +25,18 @@ namespace bubo {
         return shaderID;
     }
 
-    void Shader::init(const char *vertexShaderSource, const char *fragmentShaderSource) {
+    void Shader::init(const std::string& vertexShaderSource, const std::string& fragmentShaderSource) {
 
-        int vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
-        int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+        unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource.c_str());
+        unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource.c_str());
 
-        m_shaderProgram = glCreateProgram();
+        m_shaderProgramID = glCreateProgram();
 
-        glAttachShader(m_shaderProgram, vertexShader);
-        glAttachShader(m_shaderProgram, fragmentShader);
+        glAttachShader(m_shaderProgramID, vertexShader);
+        glAttachShader(m_shaderProgramID, fragmentShader);
 
-        glLinkProgram(m_shaderProgram);
-        checkProgramLinkError(m_shaderProgram);
+        glLinkProgram(m_shaderProgramID);
+        checkProgramLinkError();
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
@@ -42,46 +44,56 @@ namespace bubo {
     }
 
     void Shader::destroy() const {
-        glDeleteProgram(m_shaderProgram);
-    }
-
-    void Shader::use() const {
-        glUseProgram(m_shaderProgram);
+        glDeleteProgram(m_shaderProgramID);
     }
 
     void Shader::checkShaderCompilationError(unsigned int type, unsigned int shaderID) {
+
         int success;
-        char infoLog[512];
         glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
-        glGetShaderInfoLog(shaderID, 512, nullptr, infoLog);
 
-        std::stringstream errorMessage;
-        errorMessage << "Failed to compile ";
-        switch (type) {
-            case GL_VERTEX_SHADER: errorMessage << "vertex"; break;
-            case GL_FRAGMENT_SHADER: errorMessage << "fragment"; break;
-            default: errorMessage << "unknown";
+        if (!success) {
+            glDeleteShader(shaderID);
+
+            GLint length;
+            glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length);
+
+            std::vector<GLchar> infoLog(length);
+            glGetShaderInfoLog(shaderID, length, nullptr, &infoLog[0]);
+
+            BUBO_DEBUG_ERROR("{0}", infoLog.data());
+
+            switch (type) {
+                case GL_VERTEX_SHADER:
+                    BUBO_ASSERT(success, "Failed to compile vertex shader!")
+                case GL_FRAGMENT_SHADER:
+                    BUBO_ASSERT(success, "Failed to compile fragment shader!")
+                default:
+                    BUBO_ASSERT(success, "Failed to compile unknown shader!")
+            }
         }
-        errorMessage << " shader!" << std::endl;
 
-        errorMessage << infoLog;
-        BUBO_ASSERT(success, errorMessage.str())
     }
 
-    void Shader::checkProgramLinkError(unsigned int programID) {
+    void Shader::checkProgramLinkError() {
+
         int success;
-        char infoLog[512];
-        glGetProgramiv(programID, GL_LINK_STATUS, &success);
-        glGetProgramInfoLog(programID, 512, nullptr, infoLog);
+        glGetProgramiv(m_shaderProgramID, GL_LINK_STATUS, &success);
 
-        std::stringstream errorMessage;
-        errorMessage << "Failed to compile shader program!" << std::endl;
-        errorMessage << infoLog;
+        if (!success) {
+            GLint length;
+            glGetProgramiv(m_shaderProgramID, GL_INFO_LOG_LENGTH, &length);
 
-        BUBO_ASSERT(success, errorMessage.str())
+            std::vector<GLchar> infoLog(length);
+            glGetProgramInfoLog(m_shaderProgramID, length, nullptr, &infoLog[0]);
+
+            BUBO_DEBUG_ERROR("{0}", infoLog.data());
+            BUBO_ASSERT(success, "Failed to compile shader program!")
+        }
+
     }
 
-    std::string Shader::parseShader(const char *filepath) {
+    std::string Shader::parseShader(const std::string& filepath) {
         std::stringstream source;
         std::fstream stream(filepath);
         std::string line;
@@ -89,6 +101,53 @@ namespace bubo {
             source << line << std::endl;
         }
         return source.str();
+    }
+
+    void Shader::bind() const {
+        glUseProgram(m_shaderProgramID);
+    }
+
+    void Shader::unbind() const {
+        glUseProgram(0);
+    }
+
+    void Shader::setBool(const std::string &name, bool value) {
+        setInt(name, (int) value);
+    }
+
+    void Shader::setInt(const std::string &name, int value) {
+        GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
+        glUniform1i(location, value);
+    }
+
+    void Shader::setFloat(const std::string &name, float value) {
+        GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
+        glUniform1f(location, value);
+    }
+
+    void Shader::setIntArray(const std::string &name, int *values, uint32_t count) {
+        GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
+        glUniform1iv(location, count, values);
+    }
+
+    void Shader::setFloat3(const std::string &name, const glm::vec3 &value) {
+        GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
+        glUniform3f(location, value.x, value.y, value.z);
+    }
+
+    void Shader::setFloat4(const std::string &name, const glm::vec4 &value) {
+        GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
+        glUniform4f(location, value.x, value.y, value.z, value.w);
+    }
+
+    void Shader::setMat3(const std::string &name, const glm::mat3 &value) {
+        GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
+        glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    }
+
+    void Shader::setMat4(const std::string &name, const glm::mat4 &value) {
+        GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
     }
 
 }
