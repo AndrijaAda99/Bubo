@@ -1,0 +1,8 @@
+//
+// Created by andrija on 11/14/20.
+//
+
+#ifndef BUBO_INDEXBUFFEROBJECT_H
+#define BUBO_INDEXBUFFEROBJECT_H
+
+#endif //BUBO_INDEXBUFFEROBJECT_H

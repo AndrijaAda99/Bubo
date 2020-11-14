@@ -1,0 +1,8 @@
+//
+// Created by andrija on 11/14/20.
+//
+
+#ifndef BUBO_VERTEXBUFFEROBJECT_H
+#define BUBO_VERTEXBUFFEROBJECT_H
+
+#endif //BUBO_VERTEXBUFFEROBJECT_H
