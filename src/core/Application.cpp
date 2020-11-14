@@ -14,23 +14,25 @@ namespace bubo {
         m_shaderProgram = std::make_unique<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
 
         float vertices[] = {
-                -0.5f, -0.5f, 0.0f,
+                 0.5f,  0.5f, 0.0f,
                  0.5f, -0.5f, 0.0f,
-                 0.0f,  0.5f, 0.0f
+                -0.5f, -0.5f, 0.0f,
+                -0.5f,  0.5f, 0.0f
+        };
+
+        unsigned int indices[] {
+                0, 1, 3,
+                1, 2, 3
         };
 
         glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-
         glBindVertexArray(VAO);
 
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof (vertices), vertices, GL_STATIC_DRAW);
+        m_vertexBuffer = std::make_unique<VertexBufferObject>(vertices, sizeof (vertices));
+        m_indexBuffer = std::make_unique<IndexBufferObject>(indices, sizeof (indices), 6);
 
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof (float), (void*) 0);
         glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glBindVertexArray(0);
 
@@ -38,7 +40,6 @@ namespace bubo {
 
     Application::~Application() {
         glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO);
     }
 
     void Application::run() {
@@ -55,7 +56,7 @@ namespace bubo {
                                                          1.0f));
 
             glBindVertexArray(VAO);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glDrawElements(GL_TRIANGLES, m_indexBuffer->getCount(), GL_UNSIGNED_INT, 0);
             m_shaderProgram->unbind();
             m_window->update();
         }
