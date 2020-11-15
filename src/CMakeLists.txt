@@ -2,9 +2,21 @@ cmake_minimum_required(VERSION 3.18)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Bubo Main.cpp core/Application.cpp core/Logger.cpp core/Window.cpp renderer/Shader.cpp renderer/VertexBufferObject.cpp renderer/IndexBufferObject.cpp)
+add_executable(
+        Bubo
+            Main.cpp
+            core/Application.cpp
+            core/Logger.cpp
+            core/Window.cpp
+            renderer/Shader.cpp
+            renderer/VertexBufferObject.cpp
+            renderer/IndexBufferObject.cpp
+            renderer/VertexArrayObject.cpp
+            renderer/Renderer.cpp
+        )
 
-target_precompile_headers(Bubo
+target_precompile_headers(
+        Bubo
         PRIVATE
             <iostream>
             <memory>
@@ -22,7 +34,8 @@ target_precompile_headers(Bubo
             ../include/core/Assert.h
         )
 
-target_link_libraries(Bubo
+target_link_libraries(
+        Bubo
         PUBLIC
             spdlog
             glad

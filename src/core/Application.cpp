@@ -1,5 +1,7 @@
 #include "core/Application.h"
 
+#include "renderer/Renderer.h"
+
 namespace bubo {
 
     Application* Application::s_appInstance = nullptr;
@@ -14,10 +16,10 @@ namespace bubo {
         m_shaderProgram = std::make_unique<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
 
         float vertices[] = {
-                 0.5f,  0.5f, 0.0f,
-                 0.5f, -0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                -0.5f,  0.5f, 0.0f
+                 0.5f,  0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 1.0f,
+                 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 1.0f,
+                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f,
+                -0.5f,  0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 1.0f
         };
 
         unsigned int indices[] {
@@ -25,39 +27,45 @@ namespace bubo {
                 1, 2, 3
         };
 
-        glGenVertexArrays(1, &VAO);
-        glBindVertexArray(VAO);
+        m_vertexArray = std::make_shared<VertexArrayObject>();
 
-        m_vertexBuffer = std::make_unique<VertexBufferObject>(vertices, sizeof (vertices));
-        m_indexBuffer = std::make_unique<IndexBufferObject>(indices, sizeof (indices), 6);
+        m_vertexBuffer = std::make_shared<VertexBufferObject>(vertices, sizeof (vertices));
+        m_vertexBuffer->setFormat({
+            {ShaderDataType::Vec3, "aPos"},
+            {ShaderDataType::Vec4, "aColor"}
+        });
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof (float), (void*) 0);
-        glEnableVertexAttribArray(0);
+        m_vertexArray->addVertexBuffer(m_vertexBuffer);
 
-        glBindVertexArray(0);
+        m_indexBuffer = std::make_shared<IndexBufferObject>(indices, sizeof (indices), 6);
+        m_vertexArray->setVertexBuffer(m_indexBuffer);
+
+        m_vertexArray->unbind();
 
     }
 
-    Application::~Application() {
-        glDeleteVertexArrays(1, &VAO);
-    }
+    Application::~Application() {}
 
     void Application::run() {
 
         while (m_running) {
-            glClearColor(.1f, .1f, .1f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
-
             m_shaderProgram->bind();
             m_shaderProgram->setFloat4("u_Color",
-                                       glm::vec4((sin(2*glfwGetTime()) + 1) / 2.0f,
-                                                         (cos(2*glfwGetTime()) + 1) / 2.0f,
-                                                         (sin(2*glfwGetTime()) + 1) / 2.0f,
-                                                         1.0f));
-
-            glBindVertexArray(VAO);
-            glDrawElements(GL_TRIANGLES, m_indexBuffer->getCount(), GL_UNSIGNED_INT, 0);
+                                       glm::vec4((sin(2*glfwGetTime()) + 1) / 4.0f,
+                                                 (cos(2*glfwGetTime()) + 1) / 4.0f,
+                                                 (sin(2*glfwGetTime()) + 1) / 4.0f,
+                                                 0.0f));
             m_shaderProgram->unbind();
+
+            Renderer::setColor(glm::vec4(.1f, .1f, .1f, 1.0f));
+            Renderer::clear();
+
+            Renderer::beginScene();
+
+            Renderer::submit(m_shaderProgram, m_vertexArray);
+
+            Renderer::endScene();
+
             m_window->update();
         }
 
@@ -77,7 +85,7 @@ namespace bubo {
 
     bool Application::onWindowResize(WindowResizeEvent &e) {
         BUBO_DEBUG_TRACE(e.toString());
-        glViewport(0, 0, e.getWindowWidth(), e.getWindowHeight());
+        Renderer::setViewport(0, 0, e.getWindowWidth(), e.getWindowHeight());
         return true;
     }
 }
