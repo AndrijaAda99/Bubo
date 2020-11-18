@@ -28,4 +28,10 @@ namespace bubo {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
+    void Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture,
+                          std::shared_ptr<VertexArrayObject> vertexArray) {
+        texture->bind(0);
+        submit(shader, vertexArray);
+    }
+
 }

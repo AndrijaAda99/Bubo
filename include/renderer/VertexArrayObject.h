@@ -16,7 +16,7 @@ namespace bubo {
         void unbind();
 
         void addVertexBuffer(std::shared_ptr<VertexBufferObject> vertexBuffer);
-        void setVertexBuffer(std::shared_ptr<IndexBufferObject> indexBuffer);
+        void setIndexBuffer(std::shared_ptr<IndexBufferObject> indexBuffer);
 
         std::shared_ptr<IndexBufferObject> getIndexBuffer() { return m_indexBuffer; }
 

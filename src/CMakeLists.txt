@@ -13,6 +13,7 @@ add_executable(
             renderer/IndexBufferObject.cpp
             renderer/VertexArrayObject.cpp
             renderer/Renderer.cpp
+            renderer/Texture.cpp
         )
 
 target_precompile_headers(

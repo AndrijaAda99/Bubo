@@ -15,11 +15,14 @@ namespace bubo {
 
         m_shaderProgram = std::make_unique<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
 
+        m_texture = std::make_shared<Texture>("../../res/assets/textures/container.jpg");
+        m_shaderProgram->setInt("u_Texture", 0);
+
         float vertices[] = {
-                 0.5f,  0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 1.0f,
-                 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 1.0f,
-                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f,
-                -0.5f,  0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 1.0f
+                 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+                 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+                -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+                -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left
         };
 
         unsigned int indices[] {
@@ -31,16 +34,15 @@ namespace bubo {
 
         m_vertexBuffer = std::make_shared<VertexBufferObject>(vertices, sizeof (vertices));
         m_vertexBuffer->setFormat({
-            {ShaderDataType::Vec3, "aPos"},
-            {ShaderDataType::Vec4, "aColor"}
+            {ShaderDataType::Vec3, "a_Pos"},
+            {ShaderDataType::Vec3, "a_Color"},
+            {ShaderDataType::Vec2, "a_TexCoord"}
         });
 
         m_vertexArray->addVertexBuffer(m_vertexBuffer);
 
         m_indexBuffer = std::make_shared<IndexBufferObject>(indices, sizeof (indices), 6);
-        m_vertexArray->setVertexBuffer(m_indexBuffer);
-
-        m_vertexArray->unbind();
+        m_vertexArray->setIndexBuffer(m_indexBuffer);
 
     }
 
@@ -62,7 +64,7 @@ namespace bubo {
 
             Renderer::beginScene();
 
-            Renderer::submit(m_shaderProgram, m_vertexArray);
+            Renderer::submit(m_shaderProgram, m_texture, m_vertexArray);
 
             Renderer::endScene();
 

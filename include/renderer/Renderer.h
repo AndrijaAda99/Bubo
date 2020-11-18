@@ -3,6 +3,7 @@
 
 #include "VertexArrayObject.h"
 #include "Shader.h"
+#include "Texture.h"
 
 namespace bubo {
 
@@ -16,6 +17,7 @@ namespace bubo {
         static void endScene();
 
         static void submit(std::shared_ptr<Shader> shader, std::shared_ptr<VertexArrayObject> vertexArray);
+        static void submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture, std::shared_ptr<VertexArrayObject> vertexArray);
 
     };
 

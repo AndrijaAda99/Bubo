@@ -82,7 +82,7 @@ namespace bubo {
         m_vertexBuffers.push_back(vertexBuffer);
     }
 
-    void VertexArrayObject::setVertexBuffer(std::shared_ptr<IndexBufferObject> indexBuffer) {
+    void VertexArrayObject::setIndexBuffer(std::shared_ptr<IndexBufferObject> indexBuffer) {
         glBindVertexArray(m_id);
         indexBuffer->bind();
         m_indexBuffer = indexBuffer;
