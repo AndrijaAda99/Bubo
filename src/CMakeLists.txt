@@ -14,7 +14,7 @@ add_executable(
             renderer/VertexArrayObject.cpp
             renderer/Renderer.cpp
             renderer/Texture.cpp
-        )
+        renderer/Camera.cpp)
 
 target_precompile_headers(
         Bubo

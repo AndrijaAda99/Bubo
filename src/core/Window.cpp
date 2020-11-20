@@ -72,4 +72,13 @@ namespace bubo {
         glfwSwapBuffers(m_window);
     }
 
+    void Window::setVSync(bool value) {
+        if (value) {
+            glfwSwapInterval(1);
+        } else {
+            glfwSwapInterval(0);
+        }
+        m_windowData.isVSync = value;
+    }
+
 }

@@ -5,6 +5,7 @@
 #include <renderer/IndexBufferObject.h>
 #include <renderer/VertexArrayObject.h>
 #include <renderer/Texture.h>
+#include <renderer/Camera.h>
 #include "core/Window.h"
 #include "renderer/Shader.h"
 #include "events/WindowEvent.h"
@@ -31,6 +32,8 @@ namespace bubo {
         std::shared_ptr<VertexBufferObject> m_vertexBuffer;
         std::shared_ptr<IndexBufferObject> m_indexBuffer;
         std::shared_ptr<Texture> m_texture;
+
+        std::shared_ptr<Camera> m_camera;
 
         bool m_running = true;
     };

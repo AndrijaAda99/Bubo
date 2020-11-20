@@ -1,6 +1,7 @@
 #include "core/Application.h"
 
 #include "renderer/Renderer.h"
+#include <glm/trigonometric.hpp>
 
 namespace bubo {
 
@@ -12,6 +13,9 @@ namespace bubo {
 
         m_window = std::make_unique<Window>(WindowProperties_t());
         m_window->setEventCallbackFunction(BIND_EVENT_FUNC(onEvent));
+        m_window->setVSync(false);
+
+        m_camera = std::make_shared<PerspectiveCamera>(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
 
         m_shaderProgram = std::make_unique<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
 
@@ -51,6 +55,8 @@ namespace bubo {
     void Application::run() {
 
         while (m_running) {
+            m_camera->setPosition(glm::vec3(3 * sin(glfwGetTime()), 0.0f, 3 * cos(glfwGetTime())));
+
             m_shaderProgram->bind();
             m_shaderProgram->setFloat4("u_Color",
                                        glm::vec4((sin(2*glfwGetTime()) + 1) / 4.0f,
@@ -62,7 +68,7 @@ namespace bubo {
             Renderer::setColor(glm::vec4(.1f, .1f, .1f, 1.0f));
             Renderer::clear();
 
-            Renderer::beginScene();
+            Renderer::beginScene(m_camera);
 
             Renderer::submit(m_shaderProgram, m_texture, m_vertexArray);
 

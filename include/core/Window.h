@@ -36,6 +36,8 @@ namespace bubo {
             m_windowData.callbackFunc = callbackFunc_;
         }
 
+        void setVSync(bool value);
+
     private:
         void init(const WindowProperties_t& windowProperties);
         void shutdown();
@@ -43,6 +45,7 @@ namespace bubo {
         struct WindowData_t {
             std::string title;
             unsigned int width, height;
+            bool isVSync;
             EventCallbackFunc callbackFunc;
         };
 

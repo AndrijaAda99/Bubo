@@ -4,7 +4,10 @@
 
 namespace bubo {
 
-    void Renderer::beginScene() {
+    std::unique_ptr<Renderer::RendererData_t> Renderer::s_data = std::make_unique<Renderer::RendererData_t>();
+
+    void Renderer::beginScene(std::shared_ptr<Camera> camera) {
+        s_data->viewProjectionMatrix = camera->getViewProjection();
     }
 
     void Renderer::endScene() {
@@ -12,6 +15,7 @@ namespace bubo {
 
     void Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<VertexArrayObject> vertexArray) {
         shader->bind();
+        shader->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
         vertexArray->bind();
         glDrawElements(GL_TRIANGLES, vertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, 0);
     }
