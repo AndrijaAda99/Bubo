@@ -2,6 +2,7 @@
 
 #include "renderer/Renderer.h"
 #include <glm/trigonometric.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace bubo {
 
@@ -48,6 +49,7 @@ namespace bubo {
         m_indexBuffer = std::make_shared<IndexBufferObject>(indices, sizeof (indices), 6);
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
+        Renderer::init();
     }
 
     Application::~Application() {}
@@ -70,7 +72,12 @@ namespace bubo {
 
             Renderer::beginScene(m_camera);
 
-            Renderer::submit(m_shaderProgram, m_texture, m_vertexArray);
+            for (int i = 0; i < 10; ++i) {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, (float) -2*i));
+                model = glm::rotate(model, glm::radians((float) 10 * i), glm::vec3(0.0f, 0.0f, 1.0f));
+                model = glm::scale(model, glm::vec3((float) i, 1.0f, 1.0f));
+                Renderer::submit(m_shaderProgram, m_texture, m_vertexArray, model);
+            }
 
             Renderer::endScene();
 

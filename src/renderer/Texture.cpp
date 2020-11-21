@@ -25,14 +25,19 @@ namespace bubo {
         m_width = width;
         m_height = height;
 
-        int internalFormat, format;
+        int internalFormat = 0, format = 0;
         if (channels == 4) {
             internalFormat = GL_RGBA8;
             format = GL_RGBA;
         } else if (channels == 3) {
             internalFormat = GL_RGB8;
             format = GL_RGB;
+        } else if (channels == 1) {
+            internalFormat = GL_RED;
+            format = GL_RED;
         }
+
+        BUBO_ASSERT(internalFormat && format, "Channel format not supported!")
 
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);

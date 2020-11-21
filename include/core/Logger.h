@@ -1,8 +1,8 @@
 #ifndef BUBO_LOGGER_H
 #define BUBO_LOGGER_H
 
-#include <spdlog/spdlog.h>
-#include <spdlog/fmt/ostr.h>
+#include "spdlog/spdlog.h"
+#include "spdlog/fmt/ostr.h"
 
 
 namespace bubo {

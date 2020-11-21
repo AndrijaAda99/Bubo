@@ -13,9 +13,12 @@ namespace bubo {
     void Renderer::endScene() {
     }
 
-    void Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<VertexArrayObject> vertexArray) {
+    void Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture, 
+                          std::shared_ptr<VertexArrayObject> vertexArray, const glm::mat4& model) {
+        texture->bind(0);
         shader->bind();
         shader->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
+        shader->setMat4("u_Model", model);
         vertexArray->bind();
         glDrawElements(GL_TRIANGLES, vertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, 0);
     }
@@ -32,10 +35,10 @@ namespace bubo {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture,
-                          std::shared_ptr<VertexArrayObject> vertexArray) {
-        texture->bind(0);
-        submit(shader, vertexArray);
+    void Renderer::init() {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_DEPTH_TEST);
     }
 
 }
