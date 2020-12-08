@@ -6,8 +6,8 @@ namespace bubo {
 
     std::unique_ptr<Renderer::RendererData_t> Renderer::s_data = std::make_unique<Renderer::RendererData_t>();
 
-    void Renderer::beginScene(std::shared_ptr<Camera> camera) {
-        s_data->viewProjectionMatrix = camera->getViewProjection();
+    void Renderer::beginScene(const Camera& camera) {
+        s_data->viewProjectionMatrix = camera.getViewProjection();
     }
 
     void Renderer::endScene() {
@@ -39,6 +39,7 @@ namespace bubo {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_MULTISAMPLE);
     }
 
 }

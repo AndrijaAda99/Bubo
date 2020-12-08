@@ -15,7 +15,7 @@ namespace bubo {
         static void setColor(const glm::vec4& color);
         static void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
-        static void beginScene(std::shared_ptr<Camera> camera);
+        static void beginScene(const Camera& camera);
         static void endScene();
 
         static void submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture, std::shared_ptr<VertexArrayObject> vertexArray, const glm::mat4& model);

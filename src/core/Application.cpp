@@ -3,6 +3,8 @@
 #include "renderer/Renderer.h"
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <events/MouseEvent.h>
+
 
 namespace bubo {
 
@@ -14,9 +16,13 @@ namespace bubo {
 
         m_window = std::make_unique<Window>(WindowProperties_t());
         m_window->setEventCallbackFunction(BIND_EVENT_FUNC(onEvent));
+#ifdef VSYNC
+        m_window->setVSync(true);
+#else
         m_window->setVSync(false);
+#endif
 
-        m_camera = std::make_shared<PerspectiveCamera>(45.0f, 800.0f / 600.0f, 0.1f, 100.0f);
+        m_CameraController = std::make_shared<PerspectiveCameraController>();
 
         m_shaderProgram = std::make_unique<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
 
@@ -56,8 +62,25 @@ namespace bubo {
 
     void Application::run() {
 
+        float currentTime = glfwGetTime();
+        float accumulator = 0.0f;
+
         while (m_running) {
-            m_camera->setPosition(glm::vec3(3 * sin(glfwGetTime()), 0.0f, 3 * cos(glfwGetTime())));
+
+            float newTime = glfwGetTime();
+            float frameTime = newTime - currentTime;
+            currentTime = newTime;
+
+#ifdef DISPLAY_FPS
+            BUBO_DEBUG_TRACE("FPS: {0}", 1.0f / frameTime);
+#endif
+
+            accumulator += frameTime;
+            while (accumulator >= m_deltaTime) {
+                m_CameraController->onUpdate(m_deltaTime);
+                accumulator -= m_deltaTime;
+            }
+
 
             m_shaderProgram->bind();
             m_shaderProgram->setFloat4("u_Color",
@@ -70,7 +93,7 @@ namespace bubo {
             Renderer::setColor(glm::vec4(.1f, .1f, .1f, 1.0f));
             Renderer::clear();
 
-            Renderer::beginScene(m_camera);
+            Renderer::beginScene(m_CameraController->getCamera());
 
             for (int i = 0; i < 10; ++i) {
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, (float) -2*i));
@@ -91,6 +114,13 @@ namespace bubo {
 
         dispatcher.dispatch<WindowCloseEvent>(BIND_EVENT_FUNC(onWindowClose));
         dispatcher.dispatch<WindowResizeEvent>(BIND_EVENT_FUNC(onWindowResize));
+
+        dispatcher.dispatch<MouseMovedEvent>(BIND_EVENT_FUNC(onMouseMoved));
+        dispatcher.dispatch<MouseButtonPressedEvent>(BIND_EVENT_FUNC(onMousePressed));
+        dispatcher.dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FUNC(onMouseReleased));
+
+        dispatcher.dispatch<KeyPressedEvent>(BIND_EVENT_FUNC(onKeyPressed));
+        dispatcher.dispatch<KeyReleasedEvent>(BIND_EVENT_FUNC(onKeyReleased));
     }
 
     bool Application::onWindowClose(WindowCloseEvent &e) {
@@ -103,4 +133,37 @@ namespace bubo {
         Renderer::setViewport(0, 0, e.getWindowWidth(), e.getWindowHeight());
         return true;
     }
+
+    bool Application::onMouseMoved(MouseMovedEvent &e) {
+        float deltaX = e.getMouseX() - m_window->getMouseX();
+        float deltaY =  m_window->getMouseY() - e.getMouseY();
+
+        m_CameraController->onMouseMoved(deltaX, deltaY, m_deltaTime);
+
+        m_window->setMouseX(e.getMouseX());
+        m_window->setMouseY(e.getMouseY());
+
+        return true;
+    }
+
+    bool Application::onMousePressed(MouseButtonPressedEvent &e) {
+        BUBO_DEBUG_TRACE(e.toString());
+        return true;
+    }
+
+    bool Application::onMouseReleased(MouseButtonReleasedEvent &e) {
+        BUBO_DEBUG_TRACE(e.toString());
+        return true;
+    }
+
+    bool Application::onKeyPressed(KeyPressedEvent &e) {
+        BUBO_DEBUG_TRACE(e.toString());
+        return true;
+    }
+
+    bool Application::onKeyReleased(KeyReleasedEvent &e) {
+        BUBO_DEBUG_TRACE(e.toString());
+        return true;
+    }
+
 }

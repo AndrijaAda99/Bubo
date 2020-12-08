@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "events/Event.h"
+#include "Input.h"
 
 namespace bubo {
 
@@ -29,6 +30,14 @@ namespace bubo {
 
         void update();
 
+        GLFWwindow *getGLFWWindow() const { return m_window; }
+
+        float getMouseX() const { return m_mouse.xPos; }
+        float getMouseY() const { return m_mouse.yPos; }
+
+        void setMouseX(float xPos) { m_mouse.xPos = xPos; }
+        void setMouseY(float yPos) { m_mouse.yPos = yPos; }
+
         unsigned int getWidth() const { return m_windowData.width; }
         unsigned int getHeight() const { return m_windowData.height; }
 
@@ -48,9 +57,13 @@ namespace bubo {
             bool isVSync;
             EventCallbackFunc callbackFunc;
         };
+        struct Mouse_t {
+            float xPos, yPos;
+        };
 
         GLFWwindow* m_window = nullptr;
         WindowData_t m_windowData;
+        Mouse_t m_mouse;
     };
 
 }

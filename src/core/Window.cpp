@@ -35,15 +35,20 @@ namespace bubo {
                                     m_windowData.title.c_str(), nullptr, nullptr);
         BUBO_ASSERT(m_window, "Could not create GLFW window!")
 
+        m_mouse.xPos = getWidth() / 2.0f;
+        m_mouse.yPos = getHeight() / 2.0f;
+        glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
         glfwMakeContextCurrent(m_window);
         glfwSetWindowUserPointer(m_window, &m_windowData);
 
         success = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
         BUBO_ASSERT(success, "Could not initialize GLAD!")
 
+        glfwWindowHint(GLFW_SAMPLES, 16);
+
         glViewport(0, 0, getWidth(), getHeight());
 
-        // TODO: Set Events
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height){
             WindowData_t& windowData = *(WindowData_t*) glfwGetWindowUserPointer(window);
             windowData.width = width;
@@ -58,6 +63,37 @@ namespace bubo {
 
             WindowCloseEvent event;
             windowData.callbackFunc(event);
+        });
+
+        glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double xPos, double yPos){
+            WindowData_t& windowData = *(WindowData_t*) glfwGetWindowUserPointer(window);
+
+            MouseMovedEvent event((float) xPos, (float) yPos);
+            windowData.callbackFunc(event);
+        });
+
+        glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
+            WindowData_t& windowData = *(WindowData_t*) glfwGetWindowUserPointer(window);
+
+            if (action == GLFW_PRESS) {
+                MouseButtonPressedEvent event((MouseKeycode(button)));
+                windowData.callbackFunc(event);
+            } else if (action == GLFW_RELEASE) {
+                MouseButtonReleasedEvent event((MouseKeycode(button)));
+                windowData.callbackFunc(event);
+            }
+        });
+
+        glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+            WindowData_t& windowData = *(WindowData_t*) glfwGetWindowUserPointer(window);
+
+            if (action == GLFW_PRESS) {
+                KeyPressedEvent event((Keycode(key)));
+                windowData.callbackFunc(event);
+            } else if (action == GLFW_RELEASE) {
+                KeyReleasedEvent event((Keycode(key)));
+                windowData.callbackFunc(event);
+            }
         });
 
     }

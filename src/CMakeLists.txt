@@ -8,13 +8,15 @@ add_executable(
         core/Application.cpp
         core/Logger.cpp
         core/Window.cpp
+        core/Input.cpp
         renderer/Shader.cpp
         renderer/VertexBufferObject.cpp
         renderer/IndexBufferObject.cpp
         renderer/VertexArrayObject.cpp
         renderer/Renderer.cpp
         renderer/Texture.cpp
-        renderer/Camera.cpp)
+        renderer/Camera.cpp
+)
 
 target_precompile_headers(
         Bubo
