@@ -29,31 +29,27 @@ namespace bubo {
         m_texture = std::make_shared<Texture>("../../res/assets/textures/container.jpg");
         m_shaderProgram->setInt("u_Texture", 0);
 
-        float vertices[] = {
-                 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-                 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-                -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-                -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left
+        std::vector<glm::vec3> pos = {
+                {0.5f,  0.5f, 0.0f},
+                {0.5f, -0.5f, 0.0f},
+                {-0.5f, -0.5f, 0.0f},
+                {-0.5f,  0.5f, 0.0f},
         };
 
-        unsigned int indices[] {
+        std::vector<glm::vec2> uv = {
+                {1.0f, 1.0f},
+                {1.0f, 0.0f},
+                {0.0f, 0.0f},
+                {0.0f, 1.0f}
+        };
+
+        std::vector<unsigned int> ind = {
                 0, 1, 3,
                 1, 2, 3
         };
 
-        m_vertexArray = std::make_shared<VertexArrayObject>();
-
-        m_vertexBuffer = std::make_shared<VertexBufferObject>(vertices, sizeof (vertices));
-        m_vertexBuffer->setFormat({
-            {ShaderDataType::Vec3, "a_Pos"},
-            {ShaderDataType::Vec3, "a_Color"},
-            {ShaderDataType::Vec2, "a_TexCoord"}
-        });
-
-        m_vertexArray->addVertexBuffer(m_vertexBuffer);
-
-        m_indexBuffer = std::make_shared<IndexBufferObject>(indices, sizeof (indices), 6);
-        m_vertexArray->setIndexBuffer(m_indexBuffer);
+        m_Mesh = std::make_shared<Mesh>(pos, uv, ind);
+        m_Mesh->finalize();
 
         Renderer::init();
     }
@@ -81,15 +77,6 @@ namespace bubo {
                 accumulator -= m_deltaTime;
             }
 
-
-            m_shaderProgram->bind();
-            m_shaderProgram->setFloat4("u_Color",
-                                       glm::vec4((sin(2*glfwGetTime()) + 1) / 4.0f,
-                                                 (cos(2*glfwGetTime()) + 1) / 4.0f,
-                                                 (sin(2*glfwGetTime()) + 1) / 4.0f,
-                                                 0.0f));
-            m_shaderProgram->unbind();
-
             Renderer::setColor(glm::vec4(.1f, .1f, .1f, 1.0f));
             Renderer::clear();
 
@@ -99,7 +86,7 @@ namespace bubo {
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, (float) -2*i));
                 model = glm::rotate(model, glm::radians((float) 10 * i), glm::vec3(0.0f, 0.0f, 1.0f));
                 model = glm::scale(model, glm::vec3((float) i, 1.0f, 1.0f));
-                Renderer::submit(m_shaderProgram, m_texture, m_vertexArray, model);
+                Renderer::submit(m_shaderProgram, m_texture, m_Mesh, model);
             }
 
             Renderer::endScene();

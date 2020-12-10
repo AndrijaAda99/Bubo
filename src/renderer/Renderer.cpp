@@ -21,6 +21,13 @@ namespace bubo {
         shader->setMat4("u_Model", model);
         vertexArray->bind();
         glDrawElements(GL_TRIANGLES, vertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, 0);
+        vertexArray->unbind();
+        shader->unbind();
+    }
+
+    void Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture,
+                          std::shared_ptr<Mesh> mesh, const glm::mat4 &model) {
+        submit(shader, texture, mesh->getVAO(), model);
     }
 
     void Renderer::setColor(const glm::vec4& color) {

@@ -1,13 +1,11 @@
 #ifndef BUBO_APPLICATION_H
 #define BUBO_APPLICATION_H
 
-#include <renderer/VertexBufferObject.h>
-#include <renderer/IndexBufferObject.h>
-#include <renderer/VertexArrayObject.h>
 #include <renderer/Texture.h>
 #include <renderer/Camera.h>
 #include <events/MouseEvent.h>
 #include <events/KeyEvent.h>
+#include <model/Mesh.h>
 #include "core/Window.h"
 #include "renderer/Shader.h"
 #include "events/WindowEvent.h"
@@ -46,10 +44,9 @@ namespace bubo {
         float m_deltaTime = 1.0f / 60.0f;
 
         std::shared_ptr<Shader> m_shaderProgram;
-        std::shared_ptr<VertexArrayObject> m_vertexArray;
-        std::shared_ptr<VertexBufferObject> m_vertexBuffer;
-        std::shared_ptr<IndexBufferObject> m_indexBuffer;
         std::shared_ptr<Texture> m_texture;
+
+        std::shared_ptr<Mesh> m_Mesh;
 
         std::shared_ptr<PerspectiveCameraController> m_CameraController;
 
