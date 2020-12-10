@@ -18,7 +18,6 @@ add_executable(
         renderer/Camera.cpp
         model/Mesh.cpp
         model/Model.cpp
-        model/Material.cpp
 )
 
 target_precompile_headers(
@@ -33,6 +32,7 @@ target_precompile_headers(
             <sstream>
             <array>
             <vector>
+            <map>
             <unordered_map>
             <unordered_set>
             ../include/core/Config.h

@@ -45,7 +45,7 @@ namespace bubo {
         success = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
         BUBO_ASSERT(success, "Could not initialize GLAD!")
 
-        glfwWindowHint(GLFW_SAMPLES, 4);
+        glfwWindowHint(GLFW_SAMPLES, 16);
 
         glViewport(0, 0, getWidth(), getHeight());
 

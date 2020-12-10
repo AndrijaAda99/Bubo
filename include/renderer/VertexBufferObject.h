@@ -52,7 +52,7 @@ namespace bubo {
 
     class BufferFormat {
     public:
-        BufferFormat(std::initializer_list<BufferElementFormat> format) : m_format(format) {
+        BufferFormat(std::vector<BufferElementFormat> format) : m_format(format) {
             for (auto& element : m_format) {
                 element.offset = m_stride;
                 m_stride += element.size;
@@ -80,7 +80,7 @@ namespace bubo {
         void bind();
         void unbind();
 
-        void setFormat(const BufferFormat& format) { m_format = format; }
+        void setFormat(std::vector<BufferElementFormat> format) { m_format = format; }
         const BufferFormat& getFormat() const { return m_format; }
 
     private:

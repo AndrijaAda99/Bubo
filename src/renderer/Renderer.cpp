@@ -6,31 +6,61 @@ namespace bubo {
 
     std::unique_ptr<Renderer::RendererData_t> Renderer::s_data = std::make_unique<Renderer::RendererData_t>();
 
-    void Renderer::beginScene(const Camera& camera) {
+    void Renderer::beginScene(const Camera &camera) {
         s_data->viewProjectionMatrix = camera.getViewProjection();
+        s_data->cameraPosition = camera.getPosition();
     }
 
     void Renderer::endScene() {
     }
 
-    void Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture, 
-                          std::shared_ptr<VertexArrayObject> vertexArray, const glm::mat4& model) {
+    void Renderer::drawIndexedMesh(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture,
+                                   std::shared_ptr<Mesh> mesh, const glm::mat4 &model) {
         texture->bind(0);
         shader->bind();
         shader->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
         shader->setMat4("u_Model", model);
-        vertexArray->bind();
-        glDrawElements(GL_TRIANGLES, vertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, 0);
-        vertexArray->unbind();
+        mesh->getVAO()->bind();
+        glDrawElements(GL_TRIANGLES, mesh->getIndexCount(), GL_UNSIGNED_INT, 0);
+        mesh->getVAO()->unbind();
         shader->unbind();
+    }
+
+    void Renderer::drawMesh(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture,
+                            std::shared_ptr<Mesh> mesh, const glm::mat4 &model) {
+
+        texture->bind(0);
+
+        shader->bind();
+        shader->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
+        shader->setMat4("u_Model", model);
+        shader->setFloat3("u_lightPos", glm::vec3(100.0f));
+        shader->setFloat3("u_lightColor", glm::vec3(1.0f));
+        shader->setFloat3("u_objectColor", glm::vec3(1.0f, 0.5f, 0.32f));
+        shader->setFloat3("u_viewPos", s_data->cameraPosition);
+
+        mesh->getVAO()->bind();
+        glDrawArrays(GL_TRIANGLES, 0, mesh->getVertexCount());
+        mesh->getVAO()->unbind();
+
+        shader->unbind();
+
     }
 
     void Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture,
                           std::shared_ptr<Mesh> mesh, const glm::mat4 &model) {
-        submit(shader, texture, mesh->getVAO(), model);
+
+        BUBO_ASSERT(mesh->isFinalized(), "Mesh need to be finalized before rendering!")
+
+        if (mesh->isIndexed()) {
+            drawIndexedMesh(shader, texture, mesh, model);
+        } else {
+            drawMesh(shader, texture, mesh, model);
+        }
+
     }
 
-    void Renderer::setColor(const glm::vec4& color) {
+    void Renderer::setColor(const glm::vec4 &color) {
         glClearColor(color.r, color.g, color.b, color.a);
     }
 

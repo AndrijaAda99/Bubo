@@ -10,31 +10,40 @@
 
 namespace bubo {
 
+#define NUMBER_OF_MESH_PROPERTY_TYPES (4)
+
+    enum MeshPropertyType {
+        Positions   = 0,
+        UVs         = 1,
+        Normals     = 2,
+        Indices     = 3
+    };
+
     class Mesh {
     public:
-        Mesh();
-        Mesh(std::vector<glm::vec3> positions, std::vector<unsigned int> indices);
-        Mesh(std::vector<glm::vec3> positions, std::vector<glm::vec2> uv, std::vector<unsigned int> indices);
-        Mesh(std::vector<glm::vec3> positions, std::vector<glm::vec2> uv,
-             std::vector<glm::vec3> normals, std::vector<unsigned int> indices);
+        Mesh() {}
+        ~Mesh() {}
 
-        ~Mesh();
-
-        void setMPositions(std::vector<glm::vec3> positions) { m_positions = positions; }
-        void setUV(std::vector<glm::vec2> uv) { m_UV = uv; }
-        void setNormals(std::vector<glm::vec3> normals) { m_normals = normals; }
-        void setIndices(std::vector<unsigned int> indices) { m_indices = indices; }
+        void setPositions(std::vector<glm::vec3> positions);
+        void setUVs(std::vector<glm::vec2> uvs);
+        void setNormals(std::vector<glm::vec3> normals);
+        void setIndices(std::vector<unsigned int> indices);
 
         std::shared_ptr<VertexArrayObject> getVAO() { return m_VAO; }
 
         void finalize();
+        bool isFinalized() { return m_finalized; }
+        bool isIndexed() { return m_meshProperty[Indices]; }
+
+        int getVertexCount() { return m_positions.size(); }
+        int getIndexCount() { return m_indices.size(); }
 
     private:
         void setVBOFormat();
 
     private:
         std::vector<glm::vec3> m_positions;
-        std::vector<glm::vec2> m_UV;
+        std::vector<glm::vec2> m_UVs;
         std::vector<glm::vec3> m_normals;
 
         std::vector<unsigned int> m_indices;
@@ -42,6 +51,10 @@ namespace bubo {
         std::shared_ptr<VertexBufferObject> m_VBO;
         std::shared_ptr<IndexBufferObject> m_IBO;
         std::shared_ptr<VertexArrayObject> m_VAO;
+
+        std::vector<bool> m_meshProperty = std::vector<bool> (NUMBER_OF_MESH_PROPERTY_TYPES, false);
+
+        bool m_finalized = false;
     };
 
 }

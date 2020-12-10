@@ -30,25 +30,96 @@ namespace bubo {
         m_shaderProgram->setInt("u_Texture", 0);
 
         std::vector<glm::vec3> pos = {
-                {0.5f,  0.5f, 0.0f},
-                {0.5f, -0.5f, 0.0f},
-                {-0.5f, -0.5f, 0.0f},
-                {-0.5f,  0.5f, 0.0f},
+                {-0.5f, -0.5f, -0.5f},
+                { 0.5f, -0.5f, -0.5f},
+                { 0.5f,  0.5f, -0.5f},
+                { 0.5f,  0.5f, -0.5f},
+                {-0.5f,  0.5f, -0.5f},
+                {-0.5f, -0.5f, -0.5f},
+
+                {-0.5f, -0.5f,  0.5f},
+                { 0.5f, -0.5f,  0.5f},
+                { 0.5f,  0.5f,  0.5f},
+                { 0.5f,  0.5f,  0.5f},
+                {-0.5f,  0.5f,  0.5f},
+                {-0.5f, -0.5f,  0.5f},
+
+                {-0.5f,  0.5f,  0.5f},
+                {-0.5f,  0.5f, -0.5f},
+                {-0.5f, -0.5f, -0.5f},
+                {-0.5f, -0.5f, -0.5f},
+                {-0.5f, -0.5f,  0.5f},
+                {-0.5f,  0.5f,  0.5f},
+
+                { 0.5f,  0.5f,  0.5f},
+                { 0.5f,  0.5f, -0.5f},
+                { 0.5f, -0.5f, -0.5f},
+                { 0.5f, -0.5f, -0.5f},
+                { 0.5f, -0.5f,  0.5f},
+                { 0.5f,  0.5f,  0.5f},
+
+                {-0.5f, -0.5f, -0.5f},
+                { 0.5f, -0.5f, -0.5f},
+                { 0.5f, -0.5f,  0.5f},
+                { 0.5f, -0.5f,  0.5f},
+                {-0.5f, -0.5f,  0.5f},
+                {-0.5f, -0.5f, -0.5f},
+
+                {-0.5f,  0.5f, -0.5f},
+                { 0.5f,  0.5f, -0.5f},
+                { 0.5f,  0.5f,  0.5f},
+                { 0.5f,  0.5f,  0.5f},
+                {-0.5f,  0.5f,  0.5f},
+                {-0.5f,  0.5f, -0.5f}
         };
 
-        std::vector<glm::vec2> uv = {
-                {1.0f, 1.0f},
-                {1.0f, 0.0f},
-                {0.0f, 0.0f},
-                {0.0f, 1.0f}
+        std::vector<glm::vec3> normals = {
+                { 0.0f,  0.0f, -1.0f},
+                { 0.0f,  0.0f, -1.0f},
+                { 0.0f,  0.0f, -1.0f},
+                { 0.0f,  0.0f, -1.0f},
+                { 0.0f,  0.0f, -1.0f},
+                { 0.0f,  0.0f, -1.0f},
+
+                { 0.0f,  0.0f,  1.0f},
+                { 0.0f,  0.0f,  1.0f},
+                { 0.0f,  0.0f,  1.0f},
+                { 0.0f,  0.0f,  1.0f},
+                { 0.0f,  0.0f,  1.0f},
+                { 0.0f,  0.0f,  1.0f},
+
+                {-1.0f,  0.0f,  0.0f},
+                {-1.0f,  0.0f,  0.0f},
+                {-1.0f,  0.0f,  0.0f},
+                {-1.0f,  0.0f,  0.0f},
+                {-1.0f,  0.0f,  0.0f},
+                {-1.0f,  0.0f,  0.0f},
+
+                { 1.0f,  0.0f,  0.0f},
+                { 1.0f,  0.0f,  0.0f},
+                { 1.0f,  0.0f,  0.0f},
+                { 1.0f,  0.0f,  0.0f},
+                { 1.0f,  0.0f,  0.0f},
+                { 1.0f,  0.0f,  0.0f},
+
+                { 0.0f, -1.0f,  0.0f},
+                { 0.0f, -1.0f,  0.0f},
+                { 0.0f, -1.0f,  0.0f},
+                { 0.0f, -1.0f,  0.0f},
+                { 0.0f, -1.0f,  0.0f},
+                { 0.0f, -1.0f,  0.0f},
+
+                { 0.0f,  1.0f,  0.0f},
+                { 0.0f,  1.0f,  0.0f},
+                { 0.0f,  1.0f,  0.0f},
+                { 0.0f,  1.0f,  0.0f},
+                { 0.0f,  1.0f,  0.0f},
+                { 0.0f,  1.0f,  0.0f}
         };
 
-        std::vector<unsigned int> ind = {
-                0, 1, 3,
-                1, 2, 3
-        };
-
-        m_Mesh = std::make_shared<Mesh>(pos, uv, ind);
+        m_Mesh = std::make_shared<Mesh>();
+        m_Mesh->setPositions(pos);
+        m_Mesh->setNormals(normals);
         m_Mesh->finalize();
 
         Renderer::init();
@@ -85,7 +156,7 @@ namespace bubo {
             for (int i = 0; i < 10; ++i) {
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, (float) -2*i));
                 model = glm::rotate(model, glm::radians((float) 10 * i), glm::vec3(0.0f, 0.0f, 1.0f));
-                model = glm::scale(model, glm::vec3((float) i, 1.0f, 1.0f));
+                model = glm::scale(model, glm::vec3(i + 1.0f, 1.0f, 1.0f));
                 Renderer::submit(m_shaderProgram, m_texture, m_Mesh, model);
             }
 
