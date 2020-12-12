@@ -26,6 +26,32 @@ namespace bubo {
         shader->unbind();
     }
 
+    void Renderer::submit(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, glm::mat4 model) {
+        material->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
+        material->setVec3("u_viewPos", s_data->cameraPosition);
+        material->setMat4("u_Model", model);
+
+        material->setVec3("u_Material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+        material->setFloat("u_Material.shininess", 32.0f);
+
+
+        material->setVec3("u_Light.position", glm::vec3(100.0f));
+        material->setVec3("u_Light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+        material->setVec3("u_Light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+        material->setVec3("u_Light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+        material->setSamplers();
+        material->setUniforms();
+
+        mesh->getVAO()->bind();
+        if (mesh->isIndexed()) {
+            glDrawElements(GL_TRIANGLES, mesh->getIndexCount(), GL_UNSIGNED_INT, 0);
+        } else {
+            glDrawArrays(GL_TRIANGLES, 0, mesh->getVertexCount());
+        }
+        mesh->getVAO()->unbind();
+    }
+
     void Renderer::drawMesh(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture,
                             std::shared_ptr<Mesh> mesh, const glm::mat4 &model) {
 
@@ -33,11 +59,20 @@ namespace bubo {
 
         shader->bind();
         shader->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
-        shader->setMat4("u_Model", model);
-        shader->setFloat3("u_lightPos", glm::vec3(100.0f));
-        shader->setFloat3("u_lightColor", glm::vec3(1.0f));
-        shader->setFloat3("u_objectColor", glm::vec3(1.0f, 0.5f, 0.32f));
         shader->setFloat3("u_viewPos", s_data->cameraPosition);
+
+        shader->setMat4("u_Model", model);
+
+        shader->setFloat3("u_Material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+        shader->setFloat3("u_Material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+        shader->setFloat3("u_Material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+        shader->setFloat("u_Material.shininess", 32.0f);
+
+
+        shader->setFloat3("u_Light.position", glm::vec3(100.0f));
+        shader->setFloat3("u_Light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+        shader->setFloat3("u_Light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+        shader->setFloat3("u_Light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
         mesh->getVAO()->bind();
         glDrawArrays(GL_TRIANGLES, 0, mesh->getVertexCount());
@@ -78,5 +113,7 @@ namespace bubo {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_MULTISAMPLE);
     }
+
+
 
 }

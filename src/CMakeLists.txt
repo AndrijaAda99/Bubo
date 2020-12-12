@@ -16,8 +16,8 @@ add_executable(
         renderer/Renderer.cpp
         renderer/Texture.cpp
         renderer/Camera.cpp
+        renderer/Material.cpp
         model/Mesh.cpp
-        model/Model.cpp
 )
 
 target_precompile_headers(

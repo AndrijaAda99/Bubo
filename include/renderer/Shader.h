@@ -21,6 +21,7 @@ namespace bubo {
         void setInt(const std::string& name, int value);
         void setIntArray(const std::string& name, int* values, uint32_t count);
         void setFloat(const std::string& name, float value);
+        void setFloat2(const std::string& name, const glm::vec2& value);
         void setFloat3(const std::string& name, const glm::vec3& value);
         void setFloat4(const std::string& name, const glm::vec4& value);
         void setMat3(const std::string& name, const glm::mat3& value);

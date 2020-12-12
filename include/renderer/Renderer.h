@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Camera.h"
+#include "Material.h"
 
 namespace bubo {
 
@@ -20,6 +21,8 @@ namespace bubo {
         static void endScene();
 
         static void submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture, std::shared_ptr<Mesh> mesh, const glm::mat4& model);
+
+        static void submit(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, glm::mat4 model);
 
     private:
         static void drawIndexedMesh(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture, std::shared_ptr<Mesh> mesh, const glm::mat4& model);

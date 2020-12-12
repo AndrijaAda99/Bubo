@@ -5,9 +5,7 @@ namespace bubo {
 
     void Mesh::finalize() {
 
-        // NOTE(Andrija)
-        BUBO_ASSERT(m_meshProperty[Positions] && m_meshProperty[Indices],
-                    "Position and Indices needs to be set before finalizing mesh!")
+        BUBO_ASSERT(m_meshProperty[Positions], "Position needs to be set before finalizing mesh!")
 
         if (!m_VAO) {
             m_VAO = std::make_shared<VertexArrayObject>();
@@ -87,7 +85,6 @@ namespace bubo {
     void Mesh::setIndices(std::vector<unsigned int> indices) {
         m_indices = indices;
         m_meshProperty[Indices] = true;
-
     }
 
 }

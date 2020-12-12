@@ -22,12 +22,20 @@ namespace bubo {
         m_window->setVSync(false);
 #endif
 
+        BUBO_DEBUG_INFO("Setting up Camera!");
         m_CameraController = std::make_shared<PerspectiveCameraController>();
 
-        m_shaderProgram = std::make_unique<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
+        BUBO_DEBUG_INFO("Setting up Shader Program!");
+        auto shaderProgram = std::make_shared<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
 
-        m_texture = std::make_shared<Texture>("../../res/assets/textures/container.jpg");
-        m_shaderProgram->setInt("u_Texture", 0);
+        BUBO_DEBUG_INFO("Loading textures!");
+        auto diffuseTexture = std::make_shared<Texture>("../../res/assets/textures/container2.png");
+        auto specularTexture = std::make_shared<Texture>("../../res/assets/textures/container2_specular.png");
+
+        BUBO_DEBUG_INFO("Setting up materials!");
+        m_Material = std::make_shared<Material>(shaderProgram);
+        m_Material->setTexture("u_Material.diffuse", diffuseTexture, 0);
+        m_Material->setTexture("u_Material.specular", specularTexture, 1);
 
         std::vector<glm::vec3> pos = {
                 {-0.5f, -0.5f, -0.5f},
@@ -117,9 +125,55 @@ namespace bubo {
                 { 0.0f,  1.0f,  0.0f}
         };
 
+        std::vector<glm::vec2> uvs = {
+                {0.0f,  0.0f},
+                {1.0f,  0.0f},
+                {1.0f,  1.0f},
+                {1.0f,  1.0f},
+                {0.0f,  1.0f},
+                {0.0f,  0.0f},
+
+                {0.0f,  0.0f},
+                {1.0f,  0.0f},
+                {1.0f,  1.0f},
+                {1.0f,  1.0f},
+                {0.0f,  1.0f},
+                {0.0f,  0.0f},
+
+                {1.0f,  0.0f},
+                {1.0f,  1.0f},
+                {0.0f,  1.0f},
+                {0.0f,  1.0f},
+                {0.0f,  0.0f},
+                {1.0f,  0.0f},
+
+                {1.0f,  0.0f},
+                {1.0f,  1.0f},
+                {0.0f,  1.0f},
+                {0.0f,  1.0f},
+                {0.0f,  0.0f},
+                {1.0f,  0.0f},
+
+                {0.0f,  1.0f},
+                {1.0f,  1.0f},
+                {1.0f,  0.0f},
+                {1.0f,  0.0f},
+                {0.0f,  0.0f},
+                {0.0f,  1.0f},
+
+                {0.0f,  1.0f},
+                {1.0f,  1.0f},
+                {1.0f,  0.0f},
+                {1.0f,  0.0f},
+                {0.0f,  0.0f},
+                {0.0f,  1.0f},
+        };
+
+        BUBO_DEBUG_INFO("Setting up Mesh!");
         m_Mesh = std::make_shared<Mesh>();
         m_Mesh->setPositions(pos);
         m_Mesh->setNormals(normals);
+        m_Mesh->setUVs(uvs);
         m_Mesh->finalize();
 
         Renderer::init();
@@ -157,7 +211,7 @@ namespace bubo {
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, (float) -2*i));
                 model = glm::rotate(model, glm::radians((float) 10 * i), glm::vec3(0.0f, 0.0f, 1.0f));
                 model = glm::scale(model, glm::vec3(i + 1.0f, 1.0f, 1.0f));
-                Renderer::submit(m_shaderProgram, m_texture, m_Mesh, model);
+                Renderer::submit(m_Mesh, m_Material, model);
             }
 
             Renderer::endScene();
@@ -189,6 +243,10 @@ namespace bubo {
     bool Application::onWindowResize(WindowResizeEvent &e) {
         BUBO_DEBUG_TRACE(e.toString());
         Renderer::setViewport(0, 0, e.getWindowWidth(), e.getWindowHeight());
+        m_CameraController->setPerspective(45.0f,
+                                           (float) e.getWindowHeight() / (float) e.getWindowHeight(),
+                                           0.1f,
+                                           100.0f);
         return true;
     }
 

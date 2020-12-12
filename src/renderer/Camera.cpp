@@ -28,6 +28,11 @@ namespace bubo {
         m_viewProjection = m_projection * m_view;
     }
 
+    void PerspectiveCamera::setPerspective(float fov, float aspect, float near, float far) {
+        m_projection = glm::perspective(glm::radians(fov), aspect, near, far);
+        updateViewProjection();
+    }
+
     OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top) {
         m_projection = glm::ortho(left, right, bottom, top);
         updateViewProjection();
@@ -131,6 +136,10 @@ namespace bubo {
 
         m_camera.updateViewProjection();
 
+    }
+
+    void PerspectiveCameraController::setPerspective(float fov, float aspect, float near, float far) {
+        m_camera.setPerspective(fov, aspect, near, far);
     }
 
 }

@@ -32,6 +32,8 @@ namespace bubo {
         PerspectiveCamera(float fov, float aspect, float near, float far);
         ~PerspectiveCamera() = default;
 
+        void setPerspective(float fov, float aspect, float near, float far);
+
         const glm::vec3 &getPosition() const override { return m_position; }
 
         void setPosition(const glm::vec3 &position) override { m_position = position; updateViewProjection(); }
@@ -71,6 +73,7 @@ namespace bubo {
                                     const float sensitivity = DEFAULT_CAMERA_SPEED,
                                     const float dumping = DEFAULT_CAMERA_DUMPING);
 
+        void setPerspective(float fov, float aspect, float near, float far);
         const PerspectiveCamera &getCamera() const {return m_camera; }
 
         void onUpdate(float deltaTime);
