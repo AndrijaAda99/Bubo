@@ -274,6 +274,8 @@ namespace bubo {
 
     bool Application::onKeyPressed(KeyPressedEvent &e) {
         BUBO_DEBUG_TRACE(e.toString());
+        if(e.getKeycode() == KEY_ESCAPE)
+            m_running = false;
         return true;
     }
 

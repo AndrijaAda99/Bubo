@@ -35,10 +35,20 @@ namespace bubo {
         material->setFloat("u_Material.shininess", 32.0f);
 
 
-        material->setVec3("u_Light.position", glm::vec3(100.0f));
-        material->setVec3("u_Light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-        material->setVec3("u_Light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-        material->setVec3("u_Light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        material->setVec3("u_directionalLight.direction", glm::vec3(-1.0f, -1.0f, -1.0f));
+        material->setVec3("u_directionalLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+        material->setVec3("u_directionalLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+        material->setVec3("u_directionalLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+        material->setVec3("u_pointLight.position",glm::vec3(0.0f, 5.0f, -10.0f));
+        material->setVec3("u_pointLight.ambient", glm::vec3(0.2f, 0.2f, 0.0f));
+        material->setVec3("u_pointLight.diffuse", glm::vec3(0.5f, 0.5f, 0.0f));
+        material->setVec3("u_pointLight.specular",glm::vec3(1.0f, 1.0f, 0.0f));
+
+        material->setFloat("u_pointLight.constant", 1.0f);
+        material->setFloat("u_pointLight.linear", 0.09f);
+        material->setFloat("u_pointLight.quadratic", 0.03f);
+
 
         material->setSamplers();
         material->setUniforms();
