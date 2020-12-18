@@ -13,6 +13,7 @@ add_executable(
         renderer/VertexBufferObject.cpp
         renderer/IndexBufferObject.cpp
         renderer/VertexArrayObject.cpp
+        renderer/Framebuffer.cpp
         renderer/Renderer.cpp
         renderer/Texture.cpp
         renderer/Camera.cpp
@@ -44,9 +45,9 @@ target_precompile_headers(
 
 target_link_libraries(
         Bubo
-        PUBLIC
+        PRIVATE
             assimp
-            spdlog
+            spdlog::spdlog
             glad
             glfw
             OpenGL::GL

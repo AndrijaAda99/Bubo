@@ -123,7 +123,6 @@ namespace bubo {
             material->setTexture("u_Material.specular", texture_specular, 1);
         }
 
-
         return material;
     }
 

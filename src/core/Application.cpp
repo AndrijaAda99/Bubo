@@ -2,7 +2,6 @@
 
 #include "renderer/Renderer.h"
 #include <glm/trigonometric.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <events/MouseEvent.h>
 
 #include "scene/ModelLoader.h"
@@ -29,169 +28,24 @@ namespace bubo {
 
         BUBO_DEBUG_INFO("Setting up Shader Program!");
         ShaderLibrary::makeDefaultShaders();
-        auto shaderProgram = std::make_shared<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
-        auto shaderProgram_mod = std::make_shared<Shader>("../../res/shaders/teapot_vertex.shader", "../../res/shaders/teapot_fragment.shader");
 
         BUBO_DEBUG_INFO("Loading textures!");
         auto diffuseTexture = std::make_shared<Texture>("../../res/assets/textures/container2.png");
         auto specularTexture = std::make_shared<Texture>("../../res/assets/textures/container2_specular.png");
 
-        BUBO_DEBUG_INFO("Setting up materials!");
-        m_Material = std::make_shared<Material>(shaderProgram);
-        m_Material->setTexture("u_Material.diffuse", diffuseTexture, 0);
-        m_Material->setTexture("u_Material.specular", specularTexture, 1);
-
-        m_Material_mod = std::make_shared<Material>(shaderProgram_mod);
-
-        std::vector<glm::vec3> pos = {
-                {-0.5f, -0.5f, -0.5f},
-                { 0.5f, -0.5f, -0.5f},
-                { 0.5f,  0.5f, -0.5f},
-                { 0.5f,  0.5f, -0.5f},
-                {-0.5f,  0.5f, -0.5f},
-                {-0.5f, -0.5f, -0.5f},
-
-                {-0.5f, -0.5f,  0.5f},
-                { 0.5f, -0.5f,  0.5f},
-                { 0.5f,  0.5f,  0.5f},
-                { 0.5f,  0.5f,  0.5f},
-                {-0.5f,  0.5f,  0.5f},
-                {-0.5f, -0.5f,  0.5f},
-
-                {-0.5f,  0.5f,  0.5f},
-                {-0.5f,  0.5f, -0.5f},
-                {-0.5f, -0.5f, -0.5f},
-                {-0.5f, -0.5f, -0.5f},
-                {-0.5f, -0.5f,  0.5f},
-                {-0.5f,  0.5f,  0.5f},
-
-                { 0.5f,  0.5f,  0.5f},
-                { 0.5f,  0.5f, -0.5f},
-                { 0.5f, -0.5f, -0.5f},
-                { 0.5f, -0.5f, -0.5f},
-                { 0.5f, -0.5f,  0.5f},
-                { 0.5f,  0.5f,  0.5f},
-
-                {-0.5f, -0.5f, -0.5f},
-                { 0.5f, -0.5f, -0.5f},
-                { 0.5f, -0.5f,  0.5f},
-                { 0.5f, -0.5f,  0.5f},
-                {-0.5f, -0.5f,  0.5f},
-                {-0.5f, -0.5f, -0.5f},
-
-                {-0.5f,  0.5f, -0.5f},
-                { 0.5f,  0.5f, -0.5f},
-                { 0.5f,  0.5f,  0.5f},
-                { 0.5f,  0.5f,  0.5f},
-                {-0.5f,  0.5f,  0.5f},
-                {-0.5f,  0.5f, -0.5f}
-        };
-
-        std::vector<glm::vec3> normals = {
-                { 0.0f,  0.0f, -1.0f},
-                { 0.0f,  0.0f, -1.0f},
-                { 0.0f,  0.0f, -1.0f},
-                { 0.0f,  0.0f, -1.0f},
-                { 0.0f,  0.0f, -1.0f},
-                { 0.0f,  0.0f, -1.0f},
-
-                { 0.0f,  0.0f,  1.0f},
-                { 0.0f,  0.0f,  1.0f},
-                { 0.0f,  0.0f,  1.0f},
-                { 0.0f,  0.0f,  1.0f},
-                { 0.0f,  0.0f,  1.0f},
-                { 0.0f,  0.0f,  1.0f},
-
-                {-1.0f,  0.0f,  0.0f},
-                {-1.0f,  0.0f,  0.0f},
-                {-1.0f,  0.0f,  0.0f},
-                {-1.0f,  0.0f,  0.0f},
-                {-1.0f,  0.0f,  0.0f},
-                {-1.0f,  0.0f,  0.0f},
-
-                { 1.0f,  0.0f,  0.0f},
-                { 1.0f,  0.0f,  0.0f},
-                { 1.0f,  0.0f,  0.0f},
-                { 1.0f,  0.0f,  0.0f},
-                { 1.0f,  0.0f,  0.0f},
-                { 1.0f,  0.0f,  0.0f},
-
-                { 0.0f, -1.0f,  0.0f},
-                { 0.0f, -1.0f,  0.0f},
-                { 0.0f, -1.0f,  0.0f},
-                { 0.0f, -1.0f,  0.0f},
-                { 0.0f, -1.0f,  0.0f},
-                { 0.0f, -1.0f,  0.0f},
-
-                { 0.0f,  1.0f,  0.0f},
-                { 0.0f,  1.0f,  0.0f},
-                { 0.0f,  1.0f,  0.0f},
-                { 0.0f,  1.0f,  0.0f},
-                { 0.0f,  1.0f,  0.0f},
-                { 0.0f,  1.0f,  0.0f}
-        };
-
-        std::vector<glm::vec2> uvs = {
-                {0.0f,  0.0f},
-                {1.0f,  0.0f},
-                {1.0f,  1.0f},
-                {1.0f,  1.0f},
-                {0.0f,  1.0f},
-                {0.0f,  0.0f},
-
-                {0.0f,  0.0f},
-                {1.0f,  0.0f},
-                {1.0f,  1.0f},
-                {1.0f,  1.0f},
-                {0.0f,  1.0f},
-                {0.0f,  0.0f},
-
-                {1.0f,  0.0f},
-                {1.0f,  1.0f},
-                {0.0f,  1.0f},
-                {0.0f,  1.0f},
-                {0.0f,  0.0f},
-                {1.0f,  0.0f},
-
-                {1.0f,  0.0f},
-                {1.0f,  1.0f},
-                {0.0f,  1.0f},
-                {0.0f,  1.0f},
-                {0.0f,  0.0f},
-                {1.0f,  0.0f},
-
-                {0.0f,  1.0f},
-                {1.0f,  1.0f},
-                {1.0f,  0.0f},
-                {1.0f,  0.0f},
-                {0.0f,  0.0f},
-                {0.0f,  1.0f},
-
-                {0.0f,  1.0f},
-                {1.0f,  1.0f},
-                {1.0f,  0.0f},
-                {1.0f,  0.0f},
-                {0.0f,  0.0f},
-                {0.0f,  1.0f},
-        };
-
-        BUBO_DEBUG_INFO("Setting up Mesh!");
-        m_Mesh = std::make_shared<Mesh>();
-        m_Mesh->setPositions(pos);
-        m_Mesh->setNormals(normals);
-        m_Mesh->setUVs(uvs);
-        m_Mesh->finalize();
-
+        BUBO_DEBUG_INFO("Loading models!");
         m_backpack = ModelLoader::LoadModel("../../res/assets/backpack/backpack.obj");
- //       m_backpack->setPosition(glm::vec3(0.0f, 0.0f, -10.0f));
         Scene::getRoot()->addChild(m_backpack);
         Scene::getRoot()->setScale(glm::vec3(1.2f));
-        Scene::getRoot()->setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
+        Scene::getRoot()->setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
 
-        Renderer::init();
+        BUBO_DEBUG_INFO("Initializing Renderer!");
+        Renderer::init(m_window->getWidth(), m_window->getHeight());
     }
 
-    Application::~Application() {}
+    Application::~Application() {
+        Renderer::destroy();
+    }
 
     void Application::run() {
 
@@ -215,20 +69,9 @@ namespace bubo {
                 accumulator -= m_deltaTime;
             }
 
-            Renderer::setColor(glm::vec4(.1f, .1f, .1f, 1.0f));
-            Renderer::clear();
-
             Scene::updateScene();
+
             Renderer::beginScene(m_CameraController->getCamera());
-
-
-            for (int i = 0; i < 10; ++i) {
-                glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, (float) -2*i));
-                model = glm::rotate(model, glm::radians((float) 10 * i), glm::vec3(0.0f, 0.0f, 1.0f));
-                model = glm::scale(model, glm::vec3(i + 1.0f, 1.0f, 1.0f));
-                Renderer::submit(m_Mesh, m_Material, model);
-            }
-
 
             Renderer::renderScene(Scene::getRoot());
 

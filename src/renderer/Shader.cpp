@@ -53,7 +53,6 @@ namespace bubo {
         glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
 
         if (!success) {
-            glDeleteShader(shaderID);
 
             GLint length;
             glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length);
@@ -61,7 +60,9 @@ namespace bubo {
             std::vector<GLchar> infoLog(length);
             glGetShaderInfoLog(shaderID, length, nullptr, &infoLog[0]);
 
-            BUBO_DEBUG_ERROR("{0}", infoLog.data());
+            BUBO_DEBUG_ERROR("Error while compiling shader source!\n{0}", infoLog.data());
+
+            glDeleteShader(shaderID);
 
             switch (type) {
                 case GL_VERTEX_SHADER:
@@ -150,6 +151,8 @@ namespace bubo {
 
     void ShaderLibrary::makeDefaultShaders() {
         ShaderLibrary::m_shaders["defaultShader"] = std::make_shared<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
+        ShaderLibrary::m_shaders["framebufferShader"] = std::make_shared<Shader>("../../res/shaders/framebuffer_vertex.shader", "../../res/shaders/framebuffer_fragment.shader");
+        ShaderLibrary::m_shaders["posterizationShader"] = std::make_shared<Shader>("../../res/shaders/posterization_vertex.shader", "../../res/shaders/posterization_fragment.shader");
     }
 
     void ShaderLibrary::add(const std::string &name, std::shared_ptr<Shader> shader) {

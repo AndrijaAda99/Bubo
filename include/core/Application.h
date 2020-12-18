@@ -45,11 +45,6 @@ namespace bubo {
 
         float m_deltaTime = 1.0f / 60.0f;
 
-
-        std::shared_ptr<Mesh> m_Mesh;
-        std::shared_ptr<Material> m_Material;
-        std::shared_ptr<Material> m_Material_mod;
-
         std::shared_ptr<PerspectiveCameraController> m_CameraController;
 
         SceneNode* m_backpack;
