@@ -1,7 +1,8 @@
 #ifndef BUBO_RENDERER_H
 #define BUBO_RENDERER_H
 
-#include <model/Mesh.h>
+#include <scene/Mesh.h>
+#include <scene/Scene.h>
 #include "VertexArrayObject.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -23,6 +24,9 @@ namespace bubo {
         static void submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture, std::shared_ptr<Mesh> mesh, const glm::mat4& model);
 
         static void submit(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, glm::mat4 model);
+        static void submit(Mesh* mesh, std::shared_ptr<Material> material, glm::mat4 model);
+        static void submit(Mesh* mesh, Material* material, glm::mat4 transform);
+        static void renderScene(SceneNode* node);
 
     private:
         static void drawIndexedMesh(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture, std::shared_ptr<Mesh> mesh, const glm::mat4& model);

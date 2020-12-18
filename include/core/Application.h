@@ -5,8 +5,9 @@
 #include <renderer/Camera.h>
 #include <events/MouseEvent.h>
 #include <events/KeyEvent.h>
-#include <model/Mesh.h>
+#include <scene/Mesh.h>
 #include <renderer/Material.h>
+#include <scene/Scene.h>
 #include "core/Window.h"
 #include "renderer/Shader.h"
 #include "events/WindowEvent.h"
@@ -44,10 +45,14 @@ namespace bubo {
 
         float m_deltaTime = 1.0f / 60.0f;
 
+
         std::shared_ptr<Mesh> m_Mesh;
         std::shared_ptr<Material> m_Material;
+        std::shared_ptr<Material> m_Material_mod;
 
         std::shared_ptr<PerspectiveCameraController> m_CameraController;
+
+        SceneNode* m_backpack;
 
         bool m_running = true;
 

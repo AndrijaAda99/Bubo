@@ -17,7 +17,9 @@ add_executable(
         renderer/Texture.cpp
         renderer/Camera.cpp
         renderer/Material.cpp
-        model/Mesh.cpp
+        scene/Mesh.cpp
+        scene/ModelLoader.cpp
+        scene/Scene.cpp
 )
 
 target_precompile_headers(
@@ -43,6 +45,7 @@ target_precompile_headers(
 target_link_libraries(
         Bubo
         PUBLIC
+            assimp
             spdlog
             glad
             glfw

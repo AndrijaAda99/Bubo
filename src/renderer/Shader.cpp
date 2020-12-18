@@ -111,10 +111,6 @@ namespace bubo {
         glUseProgram(0);
     }
 
-    void Shader::setBool(const std::string &name, bool value) {
-        setInt(name, (int) value);
-    }
-
     void Shader::setInt(const std::string &name, int value) {
         GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
         glUniform1i(location, value);
@@ -125,10 +121,6 @@ namespace bubo {
         glUniform1f(location, value);
     }
 
-    void Shader::setIntArray(const std::string &name, int *values, uint32_t count) {
-        GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
-        glUniform1iv(location, count, values);
-    }
     void Shader::setFloat2(const std::string &name, const glm::vec2 &value) {
         GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
         glUniform2f(location, value.x, value.y);
@@ -152,6 +144,22 @@ namespace bubo {
     void Shader::setMat4(const std::string &name, const glm::mat4 &value) {
         GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    }
+
+    std::map<std::string, std::shared_ptr<Shader>> ShaderLibrary::m_shaders;
+
+    void ShaderLibrary::makeDefaultShaders() {
+        ShaderLibrary::m_shaders["defaultShader"] = std::make_shared<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
+    }
+
+    void ShaderLibrary::add(const std::string &name, std::shared_ptr<Shader> shader) {
+        if (m_shaders.find(name) != m_shaders.end()) {
+            m_shaders[name] = shader;
+        }
+    }
+
+    std::shared_ptr<Shader> ShaderLibrary::get(const std::string &name) {
+        return m_shaders.find(name)->second;
     }
 
 }

@@ -17,9 +17,7 @@ namespace bubo {
         void bind() const;
         void unbind() const;
 
-        void setBool(const std::string& name, bool value);
         void setInt(const std::string& name, int value);
-        void setIntArray(const std::string& name, int* values, uint32_t count);
         void setFloat(const std::string& name, float value);
         void setFloat2(const std::string& name, const glm::vec2& value);
         void setFloat3(const std::string& name, const glm::vec3& value);
@@ -40,6 +38,18 @@ namespace bubo {
 
     private:
         unsigned int m_shaderProgramID = 0;
+
+    };
+
+    class ShaderLibrary {
+    public:
+        static void makeDefaultShaders();
+
+        static void add(const std::string &name, std::shared_ptr<Shader> shader);
+        static std::shared_ptr<Shader> get(const std::string &name);
+
+    private:
+        static std::map<std::string, std::shared_ptr<Shader>> m_shaders;
 
     };
 

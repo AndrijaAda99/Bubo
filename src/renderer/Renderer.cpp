@@ -1,3 +1,4 @@
+#include <glm/gtx/transform.hpp>
 #include "renderer/Renderer.h"
 
 #include "glad/glad.h"
@@ -27,6 +28,8 @@ namespace bubo {
     }
 
     void Renderer::submit(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, glm::mat4 model) {
+        BUBO_ASSERT(mesh->isFinalized(), "Mesh need to be finalized before rendering!")
+
         material->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
         material->setVec3("u_viewPos", s_data->cameraPosition);
         material->setMat4("u_Model", model);
@@ -70,7 +73,6 @@ namespace bubo {
         shader->bind();
         shader->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
         shader->setFloat3("u_viewPos", s_data->cameraPosition);
-
         shader->setMat4("u_Model", model);
 
         shader->setFloat3("u_Material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
@@ -91,6 +93,31 @@ namespace bubo {
         shader->unbind();
 
     }
+
+
+    void Renderer::submit(Mesh *mesh, std::shared_ptr<Material> material, glm::mat4 model) {
+        BUBO_ASSERT(mesh->isFinalized(), "Mesh need to be finalized before rendering!")
+
+        material->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
+        material->setVec3("u_viewPos", s_data->cameraPosition);
+        material->setMat4("u_Model", model);
+
+        material->setVec3("u_lightPos", glm::vec3(100.0f));
+        material->setVec3("u_lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+
+        material->setSamplers();
+        material->setUniforms();
+
+        mesh->getVAO()->bind();
+        if (mesh->isIndexed()) {
+            glDrawElements(GL_TRIANGLES, mesh->getIndexCount(), GL_UNSIGNED_INT, 0);
+        } else {
+            glDrawArrays(GL_TRIANGLES, 0, mesh->getVertexCount());
+        }
+        mesh->getVAO()->unbind();
+
+    }
+
 
     void Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture,
                           std::shared_ptr<Mesh> mesh, const glm::mat4 &model) {
@@ -124,6 +151,46 @@ namespace bubo {
         glEnable(GL_MULTISAMPLE);
     }
 
+    void Renderer::renderScene(SceneNode *node) {
+        if (node->mesh && node->material) {
+            Renderer::submit(node->mesh, node->material, node->getTransform());
+        }
+
+        for (SceneNode *child : node->getChildren()) {
+            Renderer::renderScene(child);
+        }
+    }
+
+    void Renderer::submit(Mesh *mesh, Material *material, glm::mat4 transform) {
+
+        material->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
+        material->setVec3("u_viewPos", s_data->cameraPosition);
+        material->setMat4("u_Model", transform);
+
+        material->setVec3("u_Material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+        material->setFloat("u_Material.shininess", 32.0f);
+
+        material->setVec3("u_directionalLight.direction", glm::vec3(-1.0f, -1.0f, -1.0f));
+        material->setVec3("u_directionalLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+        material->setVec3("u_directionalLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+        material->setVec3("u_directionalLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+        material->setVec3("u_pointLight.position",glm::vec3(0.0f, 5.0f, -10.0f));
+        material->setVec3("u_pointLight.ambient", glm::vec3(0.2f, 0.2f, 0.0f));
+        material->setVec3("u_pointLight.diffuse", glm::vec3(0.5f, 0.5f, 0.0f));
+        material->setVec3("u_pointLight.specular",glm::vec3(1.0f, 1.0f, 0.0f));
+
+        material->setSamplers();
+        material->setUniforms();
+
+        mesh->bind();
+        if (mesh->isIndexed()) {
+            glDrawElements(GL_TRIANGLES, mesh->getIndexCount(), GL_UNSIGNED_INT, 0);
+        } else {
+            glDrawArrays(GL_TRIANGLES, 0, mesh->getVertexCount());
+        }
+        mesh->unbind();
+    }
 
 
 }
