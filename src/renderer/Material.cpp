@@ -3,11 +3,11 @@
 
 namespace bubo {
 
-    Material::Material(std::shared_ptr<Shader> shader) : m_shader(shader) {}
+    Material::Material(Shader *shader) : m_shader(shader) {}
 
     Material::~Material() {}
 
-    void Material::setTexture(const std::string &name, const std::shared_ptr<Texture> value, const unsigned int unit) {
+    void Material::setTexture(const std::string &name, const Texture *value, const unsigned int unit) {
         m_samplers[name].texture = value;
         m_samplers[name].unit = unit;
 
@@ -71,7 +71,7 @@ namespace bubo {
 
     }
 
-    void Material::setShader(std::shared_ptr<Shader> shader) {
+    void Material::setShader(Shader *shader) {
         m_shader = shader;
         m_samplers.clear();
         m_uniforms.floats.clear();

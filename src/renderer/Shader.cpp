@@ -147,22 +147,28 @@ namespace bubo {
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
     }
 
-    std::map<std::string, std::shared_ptr<Shader>> ShaderLibrary::m_shaders;
+    std::map<std::string, Shader*> ShaderLibrary::m_shaders;
 
     void ShaderLibrary::makeDefaultShaders() {
-        ShaderLibrary::m_shaders["defaultShader"] = std::make_shared<Shader>("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
-        ShaderLibrary::m_shaders["framebufferShader"] = std::make_shared<Shader>("../../res/shaders/framebuffer_vertex.shader", "../../res/shaders/framebuffer_fragment.shader");
-        ShaderLibrary::m_shaders["posterizationShader"] = std::make_shared<Shader>("../../res/shaders/posterization_vertex.shader", "../../res/shaders/posterization_fragment.shader");
+        ShaderLibrary::m_shaders["defaultShader"] = new Shader("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
+        ShaderLibrary::m_shaders["framebufferShader"] = new Shader("../../res/shaders/framebuffer_vertex.shader", "../../res/shaders/framebuffer_fragment.shader");
+        ShaderLibrary::m_shaders["posterizationShader"] = new Shader("../../res/shaders/posterization_vertex.shader", "../../res/shaders/posterization_fragment.shader");
     }
 
-    void ShaderLibrary::add(const std::string &name, std::shared_ptr<Shader> shader) {
+    void ShaderLibrary::add(const std::string &name, Shader *shader) {
         if (m_shaders.find(name) != m_shaders.end()) {
             m_shaders[name] = shader;
         }
     }
 
-    std::shared_ptr<Shader> ShaderLibrary::get(const std::string &name) {
+    Shader *ShaderLibrary::get(const std::string &name) {
         return m_shaders.find(name)->second;
+    }
+
+    void ShaderLibrary::destroyShaders() {
+        for (auto shader : m_shaders) {
+            delete shader.second;
+        }
     }
 
 }

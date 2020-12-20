@@ -27,9 +27,13 @@ namespace bubo {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glEnable(GL_COLOR_BUFFER_BIT);
 
+#ifdef POSTPROCESSING_POSTERIZATION
         ShaderLibrary::get("posterizationShader")->bind();
         ShaderLibrary::get("posterizationShader")->setFloat("u_Gamma", 0.3f);
         ShaderLibrary::get("posterizationShader")->setFloat("u_NumColors", 4.0f);
+#else
+        ShaderLibrary::get("framebufferShader")->bind();
+#endif
         s_data->framebufferVAO->bind();
         s_data->framebuffer->bindColorAttachment();
         glDrawArrays(GL_TRIANGLES, 0, 6);

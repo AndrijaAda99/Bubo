@@ -48,6 +48,7 @@ namespace bubo {
         std::shared_ptr<PerspectiveCameraController> m_CameraController;
 
         SceneNode* m_backpack;
+        SceneNode* m_book;
 
         bool m_running = true;
 

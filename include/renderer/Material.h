@@ -17,19 +17,19 @@ namespace bubo {
     };
 
     struct Sampler2D_t {
-        std::shared_ptr<Texture> texture;
+        const Texture *texture;
         unsigned int unit;
     };
 
     class Material {
     public:
-        Material(std::shared_ptr<Shader> shader);
+        Material(Shader *shader);
         ~Material();
 
-        void setShader(std::shared_ptr<Shader> shader);
-        const std::shared_ptr<Shader> getShader() const { return m_shader; }
+        void setShader(Shader *shader);
+        const Shader *getShader() const { return m_shader; }
 
-        void setTexture(const std::string &name, const std::shared_ptr<Texture> value, const unsigned int unit);
+        void setTexture(const std::string &name, const Texture *value, const unsigned int unit);
         void setFloat(const std::string &name, const float value);
         void setVec2(const std::string &name, const glm::vec2 &value);
         void setVec3(const std::string &name, const glm::vec3 &value);
@@ -41,7 +41,7 @@ namespace bubo {
         void setUniforms();
 
     private:
-        std::shared_ptr<Shader> m_shader;
+        Shader *m_shader;
         std::map<std::string, Sampler2D_t> m_samplers;
         Uniforms_t m_uniforms;
 

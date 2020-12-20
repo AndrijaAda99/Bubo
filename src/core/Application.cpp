@@ -30,14 +30,20 @@ namespace bubo {
         ShaderLibrary::makeDefaultShaders();
 
         BUBO_DEBUG_INFO("Loading textures!");
+#if 1
         auto diffuseTexture = std::make_shared<Texture>("../../res/assets/textures/container2.png");
         auto specularTexture = std::make_shared<Texture>("../../res/assets/textures/container2_specular.png");
+#endif
 
         BUBO_DEBUG_INFO("Loading models!");
-        m_backpack = ModelLoader::LoadModel("../../res/assets/backpack/backpack.obj");
+        m_backpack = ModelLoader::LoadModel("../../res/assets/backpack/backpack.obj", true);
+        m_backpack->setScale(glm::vec3(1.2f));
+        m_backpack->setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
+
+        m_book = ModelLoader::LoadModel("../../res/assets/box/scene.gltf", false);
+
         Scene::getRoot()->addChild(m_backpack);
-        Scene::getRoot()->setScale(glm::vec3(1.2f));
-        Scene::getRoot()->setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
+        Scene::getRoot()->addChild(m_book);
 
         BUBO_DEBUG_INFO("Initializing Renderer!");
         Renderer::init(m_window->getWidth(), m_window->getHeight());
@@ -45,6 +51,10 @@ namespace bubo {
 
     Application::~Application() {
         Renderer::destroy();
+        ModelLoader::destroyMeshData();
+        ModelLoader::destroyMaterialData();
+        ModelLoader::destroyTextures();
+        ShaderLibrary::destroyShaders();
     }
 
     void Application::run() {
@@ -65,7 +75,6 @@ namespace bubo {
             accumulator += frameTime;
             while (accumulator >= m_deltaTime) {
                 m_CameraController->onUpdate(m_deltaTime);
-                Scene::getRoot()->setRotation(glm::vec4(0.0f, 1.0f, 0.0f, currentTime));
                 accumulator -= m_deltaTime;
             }
 

@@ -8,14 +8,20 @@
 namespace bubo {
 
     std::vector<Mesh*> ModelLoader::s_loadedMeshes;
-    std::map<std::string, std::shared_ptr<Texture>> ModelLoader::s_loadedTextures;
+    std::vector<Material*> ModelLoader::s_loadedMaterials;
+    std::map<std::string, const Texture*> ModelLoader::s_loadedTextures;
 
-    SceneNode *ModelLoader::LoadModel(const std::string &path) {
+    SceneNode *ModelLoader::LoadModel(const std::string &path, bool flipUVs) {
 
         Assimp::Importer importer;
 
         BUBO_DEBUG_TRACE("Assimp loading model from path: {0}", path);
-        const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+        const aiScene *scene;
+        if (flipUVs) {
+            scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+        } else {
+            scene = importer.ReadFile(path, aiProcess_Triangulate);
+        }
 
         if (!scene) {
             BUBO_WARN("Assimp failed to load model from path: {0}\nAssimp Error: {1}", path, importer.GetErrorString());
@@ -110,7 +116,7 @@ namespace bubo {
             aMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path);
             std::string filename = ModelLoader::parseFilename(directory, &path);
 
-            std::shared_ptr<Texture> texture_diffuse = ModelLoader::LoadTexture(filename);
+            const Texture *texture_diffuse = ModelLoader::LoadTexture(filename);
             material->setTexture("u_Material.diffuse", texture_diffuse, 0);
         }
 
@@ -119,9 +125,11 @@ namespace bubo {
             aMaterial->GetTexture(aiTextureType_SPECULAR, 0, &path);
             std::string filename = ModelLoader::parseFilename(directory, &path);
 
-            std::shared_ptr<Texture> texture_specular = ModelLoader::LoadTexture(filename);
+            const Texture *texture_specular = ModelLoader::LoadTexture(filename);
             material->setTexture("u_Material.specular", texture_specular, 1);
         }
+
+        s_loadedMaterials.push_back(material);
 
         return material;
     }
@@ -136,13 +144,32 @@ namespace bubo {
         return path;
     }
 
-    std::shared_ptr<Texture> ModelLoader::LoadTexture(const std::string& path) {
+    const Texture* ModelLoader::LoadTexture(const std::string& path) {
 
         if (s_loadedTextures.find(path) == s_loadedTextures.end())  {
-            s_loadedTextures[path] = std::make_shared<Texture>(path);
+            BUBO_DEBUG_TRACE("Loading texture from path: {0}", path.c_str());
+            s_loadedTextures[path] = new Texture(path);
         }
 
         return s_loadedTextures[path];
+    }
+
+    void ModelLoader::destroyMeshData() {
+        for (Mesh *mesh : s_loadedMeshes) {
+            delete mesh;
+        }
+    }
+
+    void ModelLoader::destroyMaterialData() {
+        for (Material *material : s_loadedMaterials) {
+            delete material;
+        }
+    }
+
+    void ModelLoader::destroyTextures() {
+        for (auto it : s_loadedTextures) {
+            delete it.second;
+        }
     }
 
 }

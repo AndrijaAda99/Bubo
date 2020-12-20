@@ -10,7 +10,7 @@ namespace bubo {
         Texture(const std::string& path);
         ~Texture();
 
-        void bind(unsigned int unit);
+        void bind(unsigned int unit) const;
 
         const unsigned int getWidth() const { return m_width; }
         const unsigned int getHeight() const { return m_height; }

@@ -44,12 +44,13 @@ namespace bubo {
     class ShaderLibrary {
     public:
         static void makeDefaultShaders();
+        static void destroyShaders();
 
-        static void add(const std::string &name, std::shared_ptr<Shader> shader);
-        static std::shared_ptr<Shader> get(const std::string &name);
+        static void add(const std::string &name, Shader *shader);
+        static Shader *get(const std::string &name);
 
     private:
-        static std::map<std::string, std::shared_ptr<Shader>> m_shaders;
+        static std::map<std::string, Shader*> m_shaders;
 
     };
 
