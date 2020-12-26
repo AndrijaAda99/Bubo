@@ -12,7 +12,7 @@ namespace bubo {
 		std::map<std::string, glm::vec2> vec2s;
 		std::map<std::string, glm::vec3> vec3s;
 		std::map<std::string, glm::vec4> vec4s;
-        std::map<std::string, glm::mat4> mat3s;
+        std::map<std::string, glm::mat3> mat3s;
         std::map<std::string, glm::mat4> mat4s;
     };
 

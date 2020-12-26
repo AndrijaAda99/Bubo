@@ -37,6 +37,7 @@ namespace bubo {
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_properties.width, m_properties.height);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_renderAttachment);
 
+        glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 

@@ -47,8 +47,6 @@ namespace bubo {
 
         glfwWindowHint(GLFW_SAMPLES, 16);
 
-        glViewport(0, 0, getWidth(), getHeight());
-
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height){
             WindowData_t& windowData = *(WindowData_t*) glfwGetWindowUserPointer(window);
             windowData.width = width;
@@ -93,7 +91,7 @@ namespace bubo {
             } else if (action == GLFW_RELEASE) {
                 KeyReleasedEvent event((Keycode(key)));
                 windowData.callbackFunc(event);
-            }
+           }
         });
 
     }

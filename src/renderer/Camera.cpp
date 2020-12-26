@@ -26,6 +26,7 @@ namespace bubo {
 
         m_view = glm::lookAt(m_position, m_position + m_forward, m_up);
         m_viewProjection = m_projection * m_view;
+        m_noTranslationViewProjection = m_projection * glm::mat4(glm::mat3(m_view));
     }
 
     void PerspectiveCamera::setPerspective(float fov, float aspect, float near, float far) {
@@ -44,6 +45,7 @@ namespace bubo {
         m_view = glm::inverse(transform);
 
         m_viewProjection = m_projection * m_view;
+        m_noTranslationViewProjection = m_projection * glm::mat4(glm::mat3(m_view));
     }
 
     PerspectiveCameraController::PerspectiveCameraController(const float cameraSpeed,
@@ -76,27 +78,27 @@ namespace bubo {
 
         if (Input::isKeyPressed(KEY_S)) {
             direction -= m_camera.getForward();
-            NORMALIZE_IF_NOT_ZERO(direction);
+            NORMALIZE_IF_NOT_ZERO(direction)
         }
         if (Input::isKeyPressed(KEY_W)) {
             direction += m_camera.getForward();
-            NORMALIZE_IF_NOT_ZERO(direction);
+            NORMALIZE_IF_NOT_ZERO(direction)
         }
         if (Input::isKeyPressed(KEY_A)) {
             direction -= m_camera.getRight();
-            NORMALIZE_IF_NOT_ZERO(direction);
+            NORMALIZE_IF_NOT_ZERO(direction)
         }
         if (Input::isKeyPressed(KEY_D)) {
             direction += m_camera.getRight();
-            NORMALIZE_IF_NOT_ZERO(direction);
+            NORMALIZE_IF_NOT_ZERO(direction)
         }
         if (Input::isKeyPressed(KEY_Q)) {
             direction -= m_camera.getUp();
-            NORMALIZE_IF_NOT_ZERO(direction);
+            NORMALIZE_IF_NOT_ZERO(direction)
         }
         if (Input::isKeyPressed(KEY_E)) {
             direction += m_camera.getUp();
-            NORMALIZE_IF_NOT_ZERO(direction);
+            NORMALIZE_IF_NOT_ZERO(direction)
         }
 
         m_targetPosition += direction * m_cameraSpeed * deltaTime;

@@ -153,6 +153,7 @@ namespace bubo {
         ShaderLibrary::m_shaders["defaultShader"] = new Shader("../../res/shaders/vertex.shader", "../../res/shaders/fragment.shader");
         ShaderLibrary::m_shaders["framebufferShader"] = new Shader("../../res/shaders/framebuffer_vertex.shader", "../../res/shaders/framebuffer_fragment.shader");
         ShaderLibrary::m_shaders["posterizationShader"] = new Shader("../../res/shaders/posterization_vertex.shader", "../../res/shaders/posterization_fragment.shader");
+        ShaderLibrary::m_shaders["skyboxShader"] = new Shader("../../res/shaders/skybox_vertex.shader", "../../res/shaders/skybox_fragment.shader");
     }
 
     void ShaderLibrary::add(const std::string &name, Shader *shader) {

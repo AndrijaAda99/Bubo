@@ -15,12 +15,16 @@ namespace bubo {
     public:
         virtual const glm::vec3 &getPosition() const = 0;
         virtual void setPosition(const glm::vec3 &position) = 0;
-        virtual const glm::mat4 &getViewProjection() const = 0;
+
+        const glm::mat4 &getViewProjection() const { return m_viewProjection; }
+        const glm::mat4 &getNoTranslationViewProjection() const { return m_noTranslationViewProjection; }
 
     protected:
         glm::mat4 m_projection      = glm::mat4(1.0f);
         glm::mat4 m_view            = glm::mat4(1.0f);
         glm::mat4 m_viewProjection  = glm::mat4(1.0f);
+
+        glm::mat4 m_noTranslationViewProjection = glm::mat4(1.0f);
 
         glm::vec3 m_position        = glm::vec3(0.0f, 0.0f, 3.0f);
 
@@ -44,8 +48,6 @@ namespace bubo {
 
         float getYaw() const { return m_yaw; }
         float getPitch() const { return m_pitch; }
-
-        const glm::mat4 &getViewProjection() const override  { return m_viewProjection; }
 
         const glm::vec3 &getUp() const { return m_up; }
         const glm::vec3 &getForward() const { return m_forward; }
@@ -103,8 +105,6 @@ namespace bubo {
 
         const glm::vec3 &getPosition() const override { return m_position; };
         void setPosition(const glm::vec3 &position) override { m_position = position; updateViewProjection(); }
-
-        const glm::mat4 &getViewProjection() const override { return m_viewProjection; }
 
     private:
         void updateViewProjection();

@@ -21,6 +21,7 @@ add_executable(
         scene/Mesh.cpp
         scene/ModelLoader.cpp
         scene/Scene.cpp
+        scene/Skybox.cpp
 )
 
 target_precompile_headers(

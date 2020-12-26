@@ -3,6 +3,7 @@
 
 #include <scene/Mesh.h>
 #include <scene/Scene.h>
+#include <scene/Skybox.h>
 #include "VertexArrayObject.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -26,13 +27,21 @@ namespace bubo {
         static void destroy();
 
     private:
+        static void initFramebuffer(uint32_t width, uint32_t height);
+        static void beginFramebuffer();
+        static void endFramebuffer();
+
+        static void initSkybox();
+        static void renderSkybox();
 
         struct RendererData_t {
             glm::mat4 viewProjectionMatrix;
+            glm::mat4 noTranslationViewProjectionMatrix;
             glm::vec3 cameraPosition;
 
             std::unique_ptr<Framebuffer> framebuffer = nullptr;
             std::unique_ptr<VertexArrayObject> framebufferVAO = nullptr;
+            std::unique_ptr<Skybox> skybox = nullptr;
         };
 
         static std::unique_ptr<RendererData_t> s_data;

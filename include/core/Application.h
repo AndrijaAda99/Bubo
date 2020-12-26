@@ -49,6 +49,7 @@ namespace bubo {
 
         SceneNode* m_backpack;
         SceneNode* m_book;
+        SceneNode* m_viking;
 
         bool m_running = true;
 

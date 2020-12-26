@@ -23,29 +23,36 @@ namespace bubo {
         m_window->setVSync(false);
 #endif
 
-        BUBO_DEBUG_INFO("Setting up Camera!");
+        BUBO_DEBUG_INFO("Setting up Camera...");
         m_CameraController = std::make_shared<PerspectiveCameraController>();
 
-        BUBO_DEBUG_INFO("Setting up Shader Program!");
+        BUBO_DEBUG_INFO("Setting up Shader Programs...");
         ShaderLibrary::makeDefaultShaders();
 
-        BUBO_DEBUG_INFO("Loading textures!");
+        BUBO_DEBUG_INFO("Loading textures...");
 #if 1
-        auto diffuseTexture = std::make_shared<Texture>("../../res/assets/textures/container2.png");
-        auto specularTexture = std::make_shared<Texture>("../../res/assets/textures/container2_specular.png");
+        auto diffuseTexture = ModelLoader::LoadTexture("../../res/assets/textures/container2.png");
+        auto specularTexture = ModelLoader::LoadTexture("../../res/assets/textures/container2_specular.png");
 #endif
 
-        BUBO_DEBUG_INFO("Loading models!");
+        BUBO_DEBUG_INFO("Setting up Scene...");
         m_backpack = ModelLoader::LoadModel("../../res/assets/backpack/backpack.obj", true);
         m_backpack->setScale(glm::vec3(1.2f));
         m_backpack->setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
 
         m_book = ModelLoader::LoadModel("../../res/assets/box/scene.gltf", false);
+        m_book->setPosition(glm::vec3(-5.0f, 0.0f, 0.0f));
 
+        m_viking = ModelLoader::LoadModel("../../res/assets/viking/scene.gltf", false);
+        m_viking->setScale(glm::vec3(0.003f));
+        m_viking->setPosition(glm::vec3(5.0f, -2.0f, 0.0f));
+        m_viking->setRotation(glm::vec4(1.0f, 0.0f, 0.0f, -glm::radians(90.0f)));
+
+        Scene::getRoot()->addChild(m_viking);
         Scene::getRoot()->addChild(m_backpack);
         Scene::getRoot()->addChild(m_book);
 
-        BUBO_DEBUG_INFO("Initializing Renderer!");
+        BUBO_DEBUG_INFO("Initializing Renderer...");
         Renderer::init(m_window->getWidth(), m_window->getHeight());
     }
 
