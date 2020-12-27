@@ -28,6 +28,17 @@ namespace bubo {
                 vertices.push_back(m_normals[i].y);
                 vertices.push_back(m_normals[i].z);
             }
+
+            if (m_meshProperty[TangentSpace]) {
+                vertices.push_back(m_tangents[i].x);
+                vertices.push_back(m_tangents[i].y);
+                vertices.push_back(m_tangents[i].z);
+
+                vertices.push_back(m_bitangents[i].x);
+                vertices.push_back(m_bitangents[i].y);
+                vertices.push_back(m_bitangents[i].z);
+            }
+
         }
 
         m_VAO->bind();
@@ -56,6 +67,10 @@ namespace bubo {
         }
         if (m_meshProperty[Normals]) {
             format.push_back({ShaderDataType::Vec3, "a_Normal"});
+        }
+        if (m_meshProperty[TangentSpace]) {
+            format.push_back({ShaderDataType::Vec3, "a_Tangent"});
+            format.push_back({ShaderDataType::Vec3, "a_Bitangent"});
         }
 
         m_VBO->setFormat(format);
@@ -89,6 +104,13 @@ namespace bubo {
             m_meshProperty[Indices] = true;
         }
     }
+    void Mesh::setTangentSpace(const std::vector<glm::vec3> &tangents, const std::vector<glm::vec3> &bitangents) {
+        m_tangents = tangents;
+        m_bitangents = bitangents;
+        if (tangents.size() > 0) {
+            m_meshProperty[TangentSpace] = true;
+        }
+    }
 
     void Mesh::bind() {
         m_VAO->bind();
@@ -97,4 +119,6 @@ namespace bubo {
     void Mesh::unbind() {
         m_VAO->unbind();
     }
+
+
 }

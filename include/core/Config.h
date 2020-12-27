@@ -8,6 +8,6 @@
 #define BIND_EVENT_FUNC(func) [this](auto&&... args) -> decltype(auto) { return this->func(std::forward<decltype(args)>(args)...); }
 #define STB_IMAGE_IMPLEMENTATION
 
-#define POSTPROCESSING_POSTERIZATION
+// #define POSTPROCESSING_POSTERIZATION
 
 #endif //BUBO_CONFIG_H

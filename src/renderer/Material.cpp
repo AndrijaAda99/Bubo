@@ -3,7 +3,8 @@
 
 namespace bubo {
 
-    Material::Material(Shader *shader) : m_shader(shader) {}
+    Material::Material(Shader *shader)
+        : m_shader(shader), m_uniforms(), m_samplers() {}
 
     Material::~Material() {}
 
@@ -19,29 +20,29 @@ namespace bubo {
         m_uniforms.floats[name] = value;
     }
 
-    void Material::setVec2(const std::string &name, const glm::vec2 &value) {
+    void Material::setVec2(const std::string &name, const glm::vec2 value) {
         m_uniforms.vec2s[name] = value;
     }
 
-    void Material::setVec3(const std::string &name, const glm::vec3 &value) {
+    void Material::setVec3(const std::string &name, const glm::vec3 value) {
         m_uniforms.vec3s[name] = value;
     }
 
-    void Material::setVec4(const std::string &name, const glm::vec4 &value) {
+    void Material::setVec4(const std::string &name, const glm::vec4 value) {
         m_uniforms.vec4s[name] = value;
     }
 
-    void Material::setMat3(const std::string &name, const glm::mat3 &value) {
+    void Material::setMat3(const std::string &name, const glm::mat3 value) {
         m_uniforms.mat3s[name] = value;
     }
 
-    void Material::setMat4(const std::string &name, const glm::mat4 &value) {
+    void Material::setMat4(const std::string &name, const glm::mat4 value) {
         m_uniforms.mat4s[name] = value;
     }
 
     void Material::setSamplers() {
         m_shader->bind();
-        for (auto sampler : m_samplers) {
+        for (const auto &sampler : m_samplers) {
             auto texture = sampler.second.texture;
             auto unit = sampler.second.unit;
             texture->bind(unit);
@@ -50,22 +51,22 @@ namespace bubo {
 
     void Material::setUniforms() {
         m_shader->bind();
-        for (auto uniform : m_uniforms.floats) {
+        for (const auto &uniform : m_uniforms.floats) {
             m_shader->setFloat(uniform.first, uniform.second);
         }
-        for (auto uniform : m_uniforms.vec2s) {
-            m_shader->setFloat2(uniform.first, uniform.second);
+        for (const auto &uniform : m_uniforms.vec2s) {
+            m_shader->setVec2(uniform.first, uniform.second);
         }
-        for (auto uniform : m_uniforms.vec3s) {
-            m_shader->setFloat3(uniform.first, uniform.second);
+        for (const auto &uniform : m_uniforms.vec3s) {
+            m_shader->setVec3(uniform.first, uniform.second);
         }
-        for (auto uniform : m_uniforms.vec4s) {
-            m_shader->setFloat4(uniform.first, uniform.second);
+        for (const auto &uniform : m_uniforms.vec4s) {
+            m_shader->setVec4(uniform.first, uniform.second);
         }
-        for (auto uniform : m_uniforms.mat3s) {
+        for (const auto &uniform : m_uniforms.mat3s) {
             m_shader->setMat3(uniform.first, uniform.second);
         }
-        for (auto uniform : m_uniforms.mat4s) {
+        for (const auto &uniform : m_uniforms.mat4s) {
             m_shader->setMat4(uniform.first, uniform.second);
         }
 

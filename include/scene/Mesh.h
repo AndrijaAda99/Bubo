@@ -10,13 +10,14 @@
 
 namespace bubo {
 
-#define NUMBER_OF_MESH_PROPERTY_TYPES (4)
+#define NUMBER_OF_MESH_PROPERTY_TYPES (5)
 
     enum MeshPropertyType {
-        Positions   = 0,
-        UVs         = 1,
-        Normals     = 2,
-        Indices     = 3
+        Positions       = 0,
+        UVs             = 1,
+        Normals         = 2,
+        Indices         = 3,
+        TangentSpace    = 4
     };
 
     class Mesh {
@@ -28,6 +29,7 @@ namespace bubo {
         void setUVs(const std::vector<glm::vec2>& uvs);
         void setNormals(const std::vector<glm::vec3>& normals);
         void setIndices(const std::vector<unsigned int>& indices);
+        void setTangentSpace(const std::vector<glm::vec3> &tangents, const std::vector<glm::vec3> &bitangents);
 
         std::shared_ptr<VertexArrayObject> getVAO() { return m_VAO; }
 
@@ -48,6 +50,8 @@ namespace bubo {
         std::vector<glm::vec3> m_positions;
         std::vector<glm::vec2> m_UVs;
         std::vector<glm::vec3> m_normals;
+        std::vector<glm::vec3> m_tangents;
+        std::vector<glm::vec3> m_bitangents;
 
         std::vector<unsigned int> m_indices;
 

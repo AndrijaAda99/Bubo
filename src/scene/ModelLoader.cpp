@@ -18,9 +18,11 @@ namespace bubo {
         BUBO_DEBUG_TRACE("Assimp loading model from path: {0}", path);
         const aiScene *scene;
         if (flipUVs) {
-            scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+            scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
+                                            aiProcess_CalcTangentSpace | aiProcess_FlipUVs);
         } else {
-            scene = importer.ReadFile(path, aiProcess_Triangulate);
+            scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
+                                            aiProcess_CalcTangentSpace);
         }
 
         if (!scene) {
@@ -69,12 +71,16 @@ namespace bubo {
         std::vector<glm::vec3> positions;
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> UVs;
+        std::vector<glm::vec3> tangents;
+        std::vector<glm::vec3> bitangents;
         std::vector<unsigned int> indices;
 
         positions.resize(aMesh->mNumVertices);
         normals.resize(aMesh->mNumVertices);
         if (aMesh->mNumUVComponents[0] > 0) {
             UVs.resize(aMesh->mNumVertices);
+            tangents.resize(aMesh->mNumVertices);
+            bitangents.resize(aMesh->mNumVertices);
         }
         indices.resize(aMesh->mNumFaces * 3);
 
@@ -83,6 +89,8 @@ namespace bubo {
             normals[i] = glm::vec3(aMesh->mNormals[i].x, aMesh->mNormals[i].y, aMesh->mNormals[i].z);
             if (aMesh->mTextureCoords[0]) {
                 UVs[i] = glm::vec2(aMesh->mTextureCoords[0][i].x, aMesh->mTextureCoords[0][i].y);
+                tangents[i] = glm::vec3(aMesh->mTangents[i].x, aMesh->mTangents[i].y, aMesh->mTangents[i].z);
+                bitangents[i] = glm::vec3(aMesh->mBitangents[i].x, aMesh->mBitangents[i].y, aMesh->mBitangents[i].z);
             } else {
                 UVs[i] = glm::vec2(0.0f, 0.0f);
             }
@@ -100,6 +108,7 @@ namespace bubo {
         mesh->setNormals(normals);
         mesh->setUVs(UVs);
         mesh->setIndices(indices);
+        mesh->setTangentSpace(tangents, bitangents);
         mesh->finalize();
 
         s_loadedMeshes.push_back(mesh);
@@ -127,6 +136,24 @@ namespace bubo {
 
             const Texture *texture_specular = ModelLoader::LoadTexture(filename);
             material->setTexture("u_Material.specular", texture_specular, 1);
+        }
+
+        if (aMaterial->GetTextureCount(aiTextureType_HEIGHT)) {
+            aiString path;
+            aMaterial->GetTexture(aiTextureType_HEIGHT, 0, &path);
+            std::string filename = ModelLoader::parseFilename(directory, &path);
+
+            const Texture *texture_specular = ModelLoader::LoadTexture(filename);
+            material->setTexture("u_Material.normal", texture_specular, 2);
+        }
+
+        if (aMaterial->GetTextureCount(aiTextureType_NORMALS)) {
+            aiString path;
+            aMaterial->GetTexture(aiTextureType_NORMALS, 0, &path);
+            std::string filename = ModelLoader::parseFilename(directory, &path);
+
+            const Texture *texture_specular = ModelLoader::LoadTexture(filename);
+            material->setTexture("u_Material.normal", texture_specular, 2);
         }
 
         s_loadedMaterials.push_back(material);

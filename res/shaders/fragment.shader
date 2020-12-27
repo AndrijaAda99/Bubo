@@ -3,6 +3,7 @@
 struct Material {
    sampler2D diffuse;
    sampler2D specular;
+   sampler2D normal;
    float shininess;
 };
 
@@ -29,29 +30,35 @@ in vec3 v_Normal;
 in vec3 v_FragPos;
 in vec2 v_TexCoords;
 
+in vec3 v_TangentLight;
+in vec3 v_TangentView;
+in vec3 v_TangentFrag;
+
 out vec4 FragColor;
 
 uniform Material u_Material;
-uniform DirectionalLight u_directionalLight;
-uniform PointLight u_pointLight;
+uniform DirectionalLight u_DirectionalLight;
+uniform PointLight u_PointLight;
 
-uniform vec3 u_lightPos;
-uniform vec3 u_lightColor;
-uniform vec3 u_viewPos;
+uniform vec3 u_LightPos;
+uniform vec3 u_ViewPos;
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir);
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 
 void main()
 {
-   vec3 norm = normalize(v_Normal);
-   vec3 viewDir = normalize(u_viewPos - v_FragPos);
+    vec3 normal = texture(u_Material.normal, v_TexCoords).rgb;
+    normal = normalize(normal * 2.0f - 1.0f);
 
-   vec3 result = vec3(0.0f, 0.0f, 0.0f);
-   result += CalcDirLight(u_directionalLight, norm, viewDir);
-   result += CalcPointLight(u_pointLight, norm, viewDir);
+    vec3 viewDir = normalize(v_TangentView - v_TangentFrag);
 
-   FragColor = vec4(result, 1.0f);
+    vec3 result = vec3(0.0f, 0.0f, 0.0f);
+    result += CalcDirLight(u_DirectionalLight, normal, viewDir);
+    result += CalcPointLight(u_PointLight, normal, viewDir);
+
+    FragColor = vec4(result, 1.0f);
+    //FragColor = texture(u_Material.normal, v_TexCoords);
 }
 
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
@@ -74,7 +81,7 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir) {
     // Point Light attenuation
-    float distance = length(light.position - v_FragPos);
+    float distance = length(v_TangentLight - v_TangentFrag);
     float attenuation = 1.0 / (light.constant + light.linear * distance +
                               light.quadratic * distance * distance);
 
@@ -82,7 +89,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir) {
     vec3 ambient  = light.ambient  * vec3(texture(u_Material.diffuse, v_TexCoords));
 
     // Diffuse
-    vec3 lightDir = normalize(light.position - v_FragPos);
+    vec3 lightDir = normalize(v_TangentLight - v_TangentFrag);
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(u_Material.diffuse, v_TexCoords));
 

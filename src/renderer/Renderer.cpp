@@ -59,22 +59,22 @@ namespace bubo {
 
     void Renderer::submit(Mesh *mesh, Material *material, glm::mat4 transform) {
 
-        material->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
-        material->setVec3("u_viewPos", s_data->cameraPosition);
-        material->setMat4("u_Model", transform);
+        material->getShader()->setMat4("u_ViewProjection", s_data->viewProjectionMatrix);
+        material->getShader()->setVec3("u_ViewPos", s_data->cameraPosition);
+        material->getShader()->setMat4("u_Model", transform);
 
-        material->setVec3("u_Material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-        material->setFloat("u_Material.shininess", 32.0f);
+        material->getShader()->setFloat("u_Material.shininess", 32.0f);
 
-        material->setVec3("u_directionalLight.direction", glm::vec3(-1.0f, -1.0f, -1.0f));
-        material->setVec3("u_directionalLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-        material->setVec3("u_directionalLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-        material->setVec3("u_directionalLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        material->getShader()->setVec3("u_DirectionalLight.direction", glm::vec3(-1.0f, -1.0f, -1.0f));
+        material->getShader()->setVec3("u_DirectionalLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+        material->getShader()->setVec3("u_DirectionalLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+        material->getShader()->setVec3("u_DirectionalLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-        material->setVec3("u_pointLight.position",glm::vec3(0.0f, 5.0f, -10.0f));
-        material->setVec3("u_pointLight.ambient", glm::vec3(0.2f, 0.2f, 0.0f));
-        material->setVec3("u_pointLight.diffuse", glm::vec3(0.5f, 0.5f, 0.0f));
-        material->setVec3("u_pointLight.specular",glm::vec3(1.0f, 1.0f, 0.0f));
+        material->getShader()->setVec3("u_PointLight.position",glm::vec3(0.0f, 5.0f, -10.0f));
+        material->getShader()->setVec3("u_LightPos", glm::vec3(0.0f, 5.0f, -10.0f));
+        material->getShader()->setVec3("u_PointLight.ambient", glm::vec3(0.2f, 0.2f, 0.0f));
+        material->getShader()->setVec3("u_PointLight.diffuse", glm::vec3(0.5f, 0.5f, 0.0f));
+        material->getShader()->setVec3("u_PointLight.specular",glm::vec3(1.0f, 1.0f, 0.0f));
 
         material->setSamplers();
         material->setUniforms();

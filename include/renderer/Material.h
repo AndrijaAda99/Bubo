@@ -27,15 +27,15 @@ namespace bubo {
         ~Material();
 
         void setShader(Shader *shader);
-        const Shader *getShader() const { return m_shader; }
+        Shader *getShader() const { return m_shader; }
 
         void setTexture(const std::string &name, const Texture *value, const unsigned int unit);
         void setFloat(const std::string &name, const float value);
-        void setVec2(const std::string &name, const glm::vec2 &value);
-        void setVec3(const std::string &name, const glm::vec3 &value);
-        void setVec4(const std::string &name, const glm::vec4 &value);
-        void setMat3(const std::string &name, const glm::mat3 &value);
-        void setMat4(const std::string &name, const glm::mat4 &value);
+        void setVec2(const std::string &name, const glm::vec2 value);
+        void setVec3(const std::string &name, const glm::vec3 value);
+        void setVec4(const std::string &name, const glm::vec4 value);
+        void setMat3(const std::string &name, const glm::mat3 value);
+        void setMat4(const std::string &name, const glm::mat4 value);
 
         void setSamplers();
         void setUniforms();

@@ -122,17 +122,17 @@ namespace bubo {
         glUniform1f(location, value);
     }
 
-    void Shader::setFloat2(const std::string &name, const glm::vec2 &value) {
+    void Shader::setVec2(const std::string &name, const glm::vec2 &value) {
         GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
         glUniform2f(location, value.x, value.y);
     }
 
-    void Shader::setFloat3(const std::string &name, const glm::vec3 &value) {
+    void Shader::setVec3(const std::string &name, const glm::vec3 &value) {
         GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
         glUniform3f(location, value.x, value.y, value.z);
     }
 
-    void Shader::setFloat4(const std::string &name, const glm::vec4 &value) {
+    void Shader::setVec4(const std::string &name, const glm::vec4 &value) {
         GLint location = glGetUniformLocation(m_shaderProgramID, name.c_str());
         glUniform4f(location, value.x, value.y, value.z, value.w);
     }
