@@ -22,6 +22,7 @@ add_executable(
         scene/ModelLoader.cpp
         scene/Scene.cpp
         scene/Skybox.cpp
+        scene/Lights.cpp
 )
 
 target_precompile_headers(

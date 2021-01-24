@@ -16,12 +16,14 @@ namespace bubo {
     class Renderer {
     public:
         static void init(uint32_t width, uint32_t height);
+        static void onUpdate(float deltaTime);
         static void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
         static void beginScene(const Camera& camera);
         static void endScene();
 
         static void submit(Mesh* mesh, Material* material, glm::mat4 transform);
+        static void submitLights(Shader* shader);
         static void renderScene(SceneNode* node);
 
         static void destroy();
@@ -42,6 +44,9 @@ namespace bubo {
             std::unique_ptr<Framebuffer> framebuffer = nullptr;
             std::unique_ptr<VertexArrayObject> framebufferVAO = nullptr;
             std::unique_ptr<Skybox> skybox = nullptr;
+
+            float gamma = 2.2f;
+            float levels = 6.0f;
         };
 
         static std::unique_ptr<RendererData_t> s_data;

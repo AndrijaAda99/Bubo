@@ -10,6 +10,7 @@ namespace bubo {
     class SceneNode {
     public:
         SceneNode();
+        SceneNode(const SceneNode* node);
         ~SceneNode();
 
         void setRotation(const glm::vec4& rotation);
@@ -55,7 +56,7 @@ namespace bubo {
     public:
         static SceneNode* getRoot() { return s_root; }
         static void updateScene();
-        static void clearScene(SceneNode* node);
+        static void clearScene(SceneNode* node = s_root);
         static void deleteSceneNode(SceneNode* node);
 
     private:

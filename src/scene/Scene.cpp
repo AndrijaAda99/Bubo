@@ -10,6 +10,17 @@ namespace bubo {
 
     }
 
+    SceneNode::SceneNode(const SceneNode *node) {
+        mesh = node->mesh;
+        material = node->material;
+
+        m_parent = node->getParent();
+        for (auto child : node->getChildren()) {
+            m_children.push_back(new SceneNode(child));
+        }
+
+    }
+
     SceneNode::~SceneNode() {
         for (int i = 0; i < m_children.size(); ++i) {
             delete m_children[i];
@@ -31,7 +42,7 @@ namespace bubo {
         m_dirty = true;
     }
 
-    const glm::mat4 & SceneNode::getTransform() {
+    const glm::mat4 &SceneNode::getTransform() {
         updateTransform();
         return m_transform;
     }
@@ -119,7 +130,7 @@ namespace bubo {
         delete node;
     }
 
-    void Scene::clearScene(SceneNode *node = s_root) {
+    void Scene::clearScene(SceneNode *node) {
         for (SceneNode *child : node->getChildren()) {
             Scene::clearScene(child);
         }

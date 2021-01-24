@@ -1,3 +1,5 @@
+#include <scene/Lights.h>
+#include <core/Input.h>
 #include "renderer/Renderer.h"
 
 #include "glad/glad.h"
@@ -65,16 +67,7 @@ namespace bubo {
 
         material->getShader()->setFloat("u_Material.shininess", 32.0f);
 
-        material->getShader()->setVec3("u_DirectionalLight.direction", glm::vec3(-1.0f, -1.0f, -1.0f));
-        material->getShader()->setVec3("u_DirectionalLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-        material->getShader()->setVec3("u_DirectionalLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-        material->getShader()->setVec3("u_DirectionalLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-
-        material->getShader()->setVec3("u_PointLight.position",glm::vec3(0.0f, 5.0f, -10.0f));
-        material->getShader()->setVec3("u_LightPos", glm::vec3(0.0f, 5.0f, -10.0f));
-        material->getShader()->setVec3("u_PointLight.ambient", glm::vec3(0.2f, 0.2f, 0.0f));
-        material->getShader()->setVec3("u_PointLight.diffuse", glm::vec3(0.5f, 0.5f, 0.0f));
-        material->getShader()->setVec3("u_PointLight.specular",glm::vec3(1.0f, 1.0f, 0.0f));
+        Renderer::submitLights(material->getShader());
 
         material->setSamplers();
         material->setUniforms();
@@ -140,8 +133,8 @@ namespace bubo {
 
 #ifdef POSTPROCESSING_POSTERIZATION
         ShaderLibrary::get("posterizationShader")->bind();
-        ShaderLibrary::get("posterizationShader")->setFloat("u_Gamma", 0.3f);
-        ShaderLibrary::get("posterizationShader")->setFloat("u_NumColors", 4.0f);
+        ShaderLibrary::get("posterizationShader")->setFloat("u_Gamma", s_data->gamma);
+        ShaderLibrary::get("posterizationShader")->setFloat("u_Levels", s_data->levels);
 #else
         ShaderLibrary::get("framebufferShader")->bind();
 #endif
@@ -176,6 +169,50 @@ namespace bubo {
         ShaderLibrary::get("skyboxShader")->unbind();
 
         glDepthFunc(GL_LESS);
+
+    }
+
+    void Renderer::submitLights(Shader *shader) {
+
+        shader->setVec3("u_DirectionalLight.direction", Lights::getDirectionalLight().getDirection());
+        shader->setVec3("u_DirectionalLight.ambient",   Lights::getDirectionalLight().getAmbient());
+        shader->setVec3("u_DirectionalLight.diffuse",   Lights::getDirectionalLight().getDiffuse());
+        shader->setVec3("u_DirectionalLight.specular",  Lights::getDirectionalLight().getSpecular());
+
+        for (int i = 0; i < Lights::getNumOfPointLights(); ++i) {
+            std::stringstream ss;
+            ss << "u_PointLight[" << i << "].";
+
+            shader->setVec3(ss.str().append("position"), Lights::getPointLights()[i].getPosition());
+            shader->setVec3(ss.str().append("ambient"), Lights::getPointLights()[i].getAmbient());
+            shader->setVec3(ss.str().append("diffuse"), Lights::getPointLights()[i].getDiffuse());
+            shader->setVec3(ss.str().append("specular"), Lights::getPointLights()[i].getSpecular());
+
+            shader->setFloat(ss.str().append("constant"), Lights::getPointLights()[i].getConstantFactor());
+            shader->setFloat(ss.str().append("linear"), Lights::getPointLights()[i].getLinearFactor());
+            shader->setFloat(ss.str().append("quadratic"), Lights::getPointLights()[i].getQuadraticFactor());
+
+            ss.clear();
+        }
+
+    }
+
+    void Renderer::onUpdate(float deltaTime) {
+
+#ifdef POSTPROCESSING_POSTERIZATION
+        if (Input::isKeyPressed(KEY_K)) {
+            s_data->gamma += 0.5f * deltaTime;
+        }
+        if (Input::isKeyPressed(KEY_J)) {
+            s_data->gamma -= 0.5f * deltaTime;
+        }
+        if (Input::isKeyPressed(KEY_L)) {
+            s_data->levels += 1.0f * deltaTime;
+        }
+        if (Input::isKeyPressed(KEY_H)) {
+            s_data->levels -= 1.0f * deltaTime;
+        }
+#endif
 
     }
 

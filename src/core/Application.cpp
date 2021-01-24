@@ -3,6 +3,7 @@
 #include "renderer/Renderer.h"
 #include <glm/trigonometric.hpp>
 #include <events/MouseEvent.h>
+#include <scene/Lights.h>
 
 #include "scene/ModelLoader.h"
 
@@ -29,12 +30,28 @@ namespace bubo {
         BUBO_DEBUG_INFO("Setting up Shader Programs...");
         ShaderLibrary::makeDefaultShaders();
 
-        BUBO_DEBUG_INFO("Setting up Scene...");
-        m_backpack = ModelLoader::LoadModel("../../res/assets/backpack/backpack.obj", true);
-        m_backpack->setScale(glm::vec3(1.2f));
-        m_backpack->setPosition(glm::vec3(0.0f, 0.0f, -5.0f));
+        BUBO_DEBUG_INFO("Initializing Lights Data...");
+        Lights::init(2);
 
-        Scene::getRoot()->addChild(m_backpack);
+        BUBO_DEBUG_INFO("Setting up Scene...");
+        for (int i = 0; i < 10; ++i) {
+            auto backpack = ModelLoader::LoadModel("../../res/assets/backpack/backpack.obj", true);
+            backpack->setScale(glm::vec3(0.8f + (rand() / (float) RAND_MAX)));
+            backpack->setPosition(glm::vec3(
+                    25.0f * (rand() / (float) RAND_MAX) - 17.5f,
+                    0.0f,
+                    25.0f * (rand() / (float) RAND_MAX) - 50.0f));
+            backpack->setRotation(glm::vec4(
+                    0.0f, 1.0f, 0.0f,
+                    40.0f * (rand() / (float) RAND_MAX)));
+            m_backpacks.push_back(backpack);
+        }
+
+        for (auto backpack : m_backpacks) {
+            Scene::getRoot()->addChild(backpack);
+        }
+
+        BUBO_DEBUG_TRACE("Root num of children: {0}", Scene::getRoot()->getChildren().size());
 
         BUBO_DEBUG_INFO("Initializing Renderer...");
         Renderer::init(m_window->getWidth(), m_window->getHeight());
@@ -46,6 +63,7 @@ namespace bubo {
         ModelLoader::destroyMaterialData();
         ModelLoader::destroyTextures();
         ShaderLibrary::destroyShaders();
+        Lights::destroy();
     }
 
     void Application::run() {
@@ -66,7 +84,8 @@ namespace bubo {
             accumulator += frameTime;
             while (accumulator >= m_deltaTime) {
                 m_CameraController->onUpdate(m_deltaTime);
-                m_backpack->setRotation(glm::vec4(0.0f, 1.0f, 0.0f, currentTime));
+                Lights::onUpdate(currentTime, m_deltaTime);
+                Renderer::onUpdate(m_deltaTime);
                 accumulator -= m_deltaTime;
             }
 

@@ -1,5 +1,7 @@
 #version 330 core
 
+#define NUM_OF_POINT_LIGHTS (2)
+
 struct Material {
    sampler2D diffuse;
    sampler2D specular;
@@ -38,7 +40,7 @@ out vec4 FragColor;
 
 uniform Material u_Material;
 uniform DirectionalLight u_DirectionalLight;
-uniform PointLight u_PointLight;
+uniform PointLight u_PointLight[NUM_OF_POINT_LIGHTS];
 
 uniform vec3 u_LightPos;
 uniform vec3 u_ViewPos;
@@ -55,7 +57,9 @@ void main()
 
     vec3 result = vec3(0.0f, 0.0f, 0.0f);
     result += CalcDirLight(u_DirectionalLight, normal, viewDir);
-    result += CalcPointLight(u_PointLight, normal, viewDir);
+    for (int i = 0; i < NUM_OF_POINT_LIGHTS; i++) {
+        result += CalcPointLight(u_PointLight[i], normal, viewDir);
+    }
 
     FragColor = vec4(result, 1.0f);
     //FragColor = texture(u_Material.normal, v_TexCoords);
